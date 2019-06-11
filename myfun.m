@@ -18,12 +18,11 @@ motorTorque = 0.0005;
 Izz = 2*((2.01e-9)+(0.0001*3.5^2)*10^-6);
 %Inertial tensor of entire system about COM
 inertialT = [ Izz*2000 0 0; 0 Izz*2000 0; 0 0 Izz*1000];
-    CdZ = 0.40;
+    CdZ = 450;
     mass = 0.004;
     %coefficient of thrust
     kT = 0.114;
     %thrust to COM moment arm distance
-    arm = [0.005 0 0];
     %prop diameter
     propDiam = 0.035;
     %prop Area
@@ -33,12 +32,13 @@ inertialT = [ Izz*2000 0 0; 0 Izz*2000 0; 0 0 Izz*1000];
     %generate a composite rotation matrix
     %multiply direction vector [0 0 1]' by rotation matrix 
     
-    %RotY = [cos(zeta(5)), 0, sin(zeta(5));0, 1, 0; -sin(zeta(5)), 0, cos(zeta(5))];
+    RotY = [cos(zeta(5)), 0, sin(zeta(5));0, 1, 0; -sin(zeta(5)), 0, cos(zeta(5))];
     %Rotation in the Z axis to model effects of precession 
     RotZ = [cos(zeta(5)), -sin(zeta(5)), 0; sin(zeta(5)), cos(zeta(5)),0; 0, 0, 1];
     
-    Rcomp= RotZ; 
-    
+    Rcomp= RotY*RotZ; 
+    arm = [0.001 0 0];
+    arm = Rcomp*arm';
     thrustDirec = Rcomp*[0 0 1]'; 
     thrustDirec = thrustDirec./sqrt(thrustDirec(1)^2+thrustDirec(2)^2+thrustDirec(3)^2);
     %thrustDirec = [0 0 1];
@@ -52,20 +52,20 @@ inertialT = [ Izz*2000 0 0; 0 Izz*2000 0; 0 0 Izz*1000];
     alpha = inertialT\tMoment; %alpha is a 3x1 vector of angular accelerations about x y z axis
     
     %only consider angular momentum about Z axis
-    propAngMomentum = Izz*zeta(2);
-    propPrecessFreq = tMoment(2)/propAngMomentum;
+    %propAngMomentum = Izz*zeta(2);
+    %propPrecessFreq = tMoment(2)/propAngMomentum;
     %propPrecessFreq = 1;
     %calculate Z axis air drag  
-    %thrustdragZ = -CdZ*rho*(zeta(4)^2)*propArea/2;
-    thrustdragZ = -CdZ*(zeta(4)^2);
+    thrustdragZ = -CdZ*rho*(zeta(4)^2)*propArea/2;
+    %thrustdragZ = -CdZ*(zeta(4)^2);
     %calculate drag torque on prop
     dragTq = ((Cd*rho*A/2)*(zeta(2)^2)*(Rmax^3-Rmin^3))/3;
     %dragTq = Cd*(zeta(2)^2);
     %calculate air drag on body
     
-    %systemStates = [zeta(2); (motorTorque-dragTq)/Izz; zeta(4); (zeta(3) + thrustdragZ - mass*9.81)/mass; propPrecessFreq];
+    systemStates = [zeta(2); (motorTorque-dragTq)/Izz; zeta(4); (thrust(3) + thrustdragZ - mass*9.81)/mass;zeta(6);alpha(2)];
 
-    systemStates = [zeta(2); (motorTorque-dragTq)/Izz; zeta(4); (thrust(3) + thrustdragZ - mass*9.81)/mass; 0;0];
+    %systemStates = [zeta(2); (motorTorque-dragTq)/Izz; zeta(4); (thrust(3) + thrustdragZ - mass*9.81)/mass; 0;0];
     %systemStates = [zeta(2); (motorTorque-dragTq)/Izz; 0;0; 0;0];
 
 

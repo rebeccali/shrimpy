@@ -69,7 +69,7 @@ transZ = 0;
 vertexNew = ones(24,4);
 vertexBodyNew = ones(24,4);
 
-[t,states] = ode45(@myfun,[0 20], [0;0;0;0.3;0;0]);
+[t,states] = ode45(@myfun,[0 20], [0;0;0;0.8;0;0]);
 
 
 tAnim = (0:dt:20)';
