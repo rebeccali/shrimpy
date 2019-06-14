@@ -1,0 +1,24 @@
+% UNO body
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{INTRODUCTION}
+\label{sec:Intro}
+\TODO{UAV increased popularity}
+\TODO{Most traditional systems require at least 4 actuators, with multi-copters taking the largest market share.}
+\TODO{Mueller looked into controlling these vehicles should an actuator fail. Can control if sacrifice yaw and attitude control bandwidth dependent on body speed. \cite{mueller2014stability}}
+\TODO{Extinction by Zhang demonstrates a vehicle \cite{zhang2016controllable}}
+\TODO{Though under-actuated, their coupling between attitude and position is straightforward}
+\TODO{Ulrich/samara use less than 2 (see references from D'Andrea paper)\cite{ulrich2010falling}}
+
+
+\section{Vehicle Description}
+\label{sec:Description}
+
+\section{Experiments}
+\label{sec:Experiments}
+
+\section{Results}
+\label{sec:Results}
+
+\section{Conclusion}
+\label{sec:Conclusion}
