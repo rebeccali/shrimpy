@@ -14,9 +14,12 @@ x0 = [0;0;0;0.5;0;200;0;0;0;0;0;0];
 
 [t,states] = ode45(@FlyerDynamics, [startTime, endTime], x0);
 
+%% Plot states
+% plotFlyer(t, states);
 
 %% Do Animation
 animateFlyer(t, states, dt, startTime, endTime)
+
 
 
 
