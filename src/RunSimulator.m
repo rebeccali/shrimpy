@@ -2,7 +2,7 @@ figure(1)
 scaleFactorZ = 1e-3;
 scaleFactorY = 17e-3;
 scaleFactorX = 4e-3;
-[F,V] = stlread('file.STL');
+
 bodySFZ = 6e-3;
 bodySFY = 2e-3;
 bodySFX = 2e-3;
@@ -69,7 +69,7 @@ transZ = 0;
 vertexNew = ones(24,4);
 vertexBodyNew = ones(24,4);
 
-[t,states] = ode45(@myfun,[0 20], [0;0;0;0.8;0;0]);
+[t,states] = ode45(@FlyerDynamics,[0 20], [0;0;0;0.8;0;0]);
 
 
 tAnim = (0:dt:20)';

@@ -1,4 +1,4 @@
-function systemStates = myfun(t,zeta)
+function systemStates = FlyerDynamics(t,zeta)
 
 
 %air density kg/m^3
