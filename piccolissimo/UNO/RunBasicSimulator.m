@@ -8,7 +8,13 @@ clear all;
 addpath(genpath('./'));
 
 % Initialize global parameters Piccolissimo
-Piccolissimo_V11
+Piccolissimo_V11;
 
-% Run many simulations 
-OptimizeBetaD
+% Run a simulation
+global Xbase
+X = Xbase;
+startTime = 0;
+finalTime = 10;
+time_in = [startTime, finalTime];
+argsIn = {'throttle', 'cyclic','plot'};
+[tout, Xout] = FlyerSimulation(X,time_in,argsIn)
