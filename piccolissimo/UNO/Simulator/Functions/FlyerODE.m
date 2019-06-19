@@ -17,7 +17,7 @@ global v_clamp r_b nu_style nu Vcg omg omg_r omg_b angles angle_r angle_s pitch1
 
         pitch1_d = 0;
         
-        %% Claculate nu
+        %% Calculate nu
         if(nu_style == 1)
             %       Numerical fixed point method
             nu = NumericalFixedPointInflow(nu);

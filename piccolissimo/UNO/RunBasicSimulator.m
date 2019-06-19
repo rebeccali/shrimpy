@@ -16,5 +16,5 @@ X = Xbase;
 startTime = 0;
 finalTime = 10;
 time_in = [startTime, finalTime];
-argsIn = {'throttle', 'cyclic','plot'};
+argsIn = {'throttle', 'circle','plot'};
 [tout, Xout] = FlyerSimulation(X,time_in,argsIn)
