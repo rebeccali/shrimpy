@@ -1,4 +1,6 @@
 %% Run a simple simulation for Piccolissimo that works.
+%  This script is used fo regression testing, make a separate
+%  script for experimentation.
 %  Copyright Modlab 2019
 %  Author: Rebecca Li
 
@@ -10,7 +12,7 @@ addpath(genpath('./'));
 % Initialize global parameters Piccolissimo
 Piccolissimo_V11;
 
-% Run a simulation
+% Run a test simulation
 global Xbase
 X = Xbase;
 startTime = 0;
@@ -19,5 +21,7 @@ time_in = [startTime, finalTime];
 argsIn = {'throttle', 'circle','plot'};
 [tout, Xout] = FlyerSimulation(X,time_in,argsIn);
 
+% Write simulation to test files. If they have changed, we 
+% have broken the simulation somehow.
 csvwrite('test/testXout.csv', Xout);
 csvwrite('test/testTout.csv', tout);
