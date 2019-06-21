@@ -14,7 +14,7 @@ Piccolissimo_V11;
 global Xbase
 X = Xbase;
 startTime = 0;
-finalTime = 10;
+finalTime = 0.5;
 time_in = [startTime, finalTime];
 argsIn = {'throttle', 'circle','plot'};
 [tout, Xout] = FlyerSimulation(X,time_in,argsIn)
