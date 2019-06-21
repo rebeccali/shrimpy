@@ -17,4 +17,7 @@ startTime = 0;
 finalTime = 0.5;
 time_in = [startTime, finalTime];
 argsIn = {'throttle', 'circle','plot'};
-[tout, Xout] = FlyerSimulation(X,time_in,argsIn)
+[tout, Xout] = FlyerSimulation(X,time_in,argsIn);
+
+csvwrite('test/testXout.csv', Xout);
+csvwrite('test/testTout.csv', tout);
