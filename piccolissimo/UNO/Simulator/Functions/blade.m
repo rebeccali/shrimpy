@@ -1,5 +1,4 @@
 function [Fb, Mb, aoa1] = blade(Vcg,omg,nu,pitch1,Cl, Cd, h, beta, chord, span, dSpan, rho)
-    
     drSteps = length(beta);
 
     Fb = zeros(drSteps,3);
