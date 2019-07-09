@@ -1,12 +1,18 @@
-function [Fb, Mb, aoa1] = blade(Vcg,omg,nu,pitch1,Cl, Cd, h, beta, chord, span, dSpan, rho)
+function [Fb, Mb, aoa1] = blade(Vcg_f,omgBlade_f,nu,pitch1,Cl, Cd, h, beta, chord, span, dSpan, rho)
+    % vcg in the flyer frame
+    %omgBlade_f is the omg in flyer frame plus the blade omega in the
+    %frame
+    % nu is inflow velocity
+    % h is height of prop to cg??
+    % span is a vector from 0 to RMax incremented by dSpan 
     drSteps = length(beta);
 
     Fb = zeros(drSteps,3);
     Mb = zeros(drSteps,3);
 
     %calculate relative wind
-    Ut1 = Vcg(1) + omg(2)*h - span*omg(3); %correct
-    Up1 = Vcg(3) + span*omg(1) - nu;
+    Ut1 = Vcg_f(1) + omgBlade_f(2)*h - span*omgBlade_f(3); %correct
+    Up1 = Vcg_f(3) + span*omgBlade_f(1) - nu;
     rw = atan2(Up1,Ut1);
 
     %lift and drag

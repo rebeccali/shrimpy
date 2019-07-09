@@ -10,6 +10,7 @@ function [F_p, M_p, F_d, M_d, aoa_p, aoa_d] = ComputeAero()
     for drag_blade = 1:B_d
         % end with 2*pi so future calculations don't care about the blade angle
         blade_angle = 2*pi*drag_blade/B_d; 
+        % angle_s is X(14) which is 
         Rb_f = [cos(angle_s + blade_angle), -sin(angle_s + blade_angle), 0; sin(angle_s + blade_angle), cos(angle_s + blade_angle), 0; 0, 0, 1];
         [F, M, aoa] = blade(Rb_f*Vcg,Rb_f*(omg+[0; 0; omg_b]),nu,pitch1_d,Cl_drag,Cd_drag,h_d,beta_d,chord_d,span_d,dSpan_d,rho);
         
