@@ -1,3 +1,4 @@
 .svn
 *.m~
 .ipynb_checkpoints
+.idea
