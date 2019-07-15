@@ -15,6 +15,13 @@ The old simulation code is contained within `piccolissimo`. Each simulation is s
 * `generic_sim` is for a generic simulator, but is difficult to use.
 * `simple_sim` is a simple simulator, but is difficult to use.
 
+## Running `RageSim`:
+
+0. Make sure Jupyter notebook is installed.  This comes with Anaconda, but otherwise follow installation instructions from https://jupyter.org/.
+1. Run `jupyter notebook` in this directory.
+2. From the browser interface, open up `src/RageSimulator.ipynb`.
+3. Run all cells.
+
 ## Running an UNO simulation:
 
 Currently, there are two ways to run simulations
