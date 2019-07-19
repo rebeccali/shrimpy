@@ -16,7 +16,7 @@ global v_clamp r_b nu_style nu Vcg omg omg_r omg_b angles angle_r angle_s pitch1
 %         i_m = X(18);
 
         pitch1_d = 0;
-        
+
         %% Calculate nu
         if(nu_style == 1)
             %       Numerical fixed point method
@@ -27,21 +27,22 @@ global v_clamp r_b nu_style nu Vcg omg omg_r omg_b angles angle_r angle_s pitch1
             nu = X(1);
             nuDot = 0;
         end
-        
+
         %% Thrust
         [F_p, M_p, F_d, M_d] = ComputeAero(); % Computes aerodynamic forces in the flyer frame
         F_p = sum(F_p,1);
         M_p = sum(M_p,1)+[F_p(3)*motor_offset,0,0]*Rb_f';
         F_d = sum(F_d,1);
         M_d = sum(M_d,1);
-        
+
+        % Rb_f computed in ComputeAero.
         %% Compute motor torque
         %         iDot = (v - K_t_m*(omg_r-omg_b)-r_m*i_m)/L_m;
         iDot = 0;
-%         i_m = (v - K_t_m*(omg_r))/r_m; % motor rotational speed is omg_r b/c omg_r is rotor speed wrt stator 
+%         i_m = (v - K_t_m*(omg_r))/r_m; % motor rotational speed is omg_r b/c omg_r is rotor speed wrt stator
         i_m = (v_clamp*pwm-K_t_m*(omg_r))/(pwm*pwm*r_b+r_m);
         v = K_t_m*(omg_r) + i_m*r_m;
-        
+
         M_mR = [0 0 K_t_m*i_m]; % in rotor frame
         M_mF = M_mR*Rr_f; % in flyer frame
 
