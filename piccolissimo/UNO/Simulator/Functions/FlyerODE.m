@@ -40,6 +40,8 @@ global v_clamp r_b nu_style nu Vcg omg omg_r omg_b angles angle_r angle_s pitch1
         %         iDot = (v - K_t_m*(omg_r-omg_b)-r_m*i_m)/L_m;
         iDot = 0;
 %         i_m = (v - K_t_m*(omg_r))/r_m; % motor rotational speed is omg_r b/c omg_r is rotor speed wrt stator
+        % r_m is motor resistance
+        % r_b is battery resistance
         i_m = (v_clamp*pwm-K_t_m*(omg_r))/(pwm*pwm*r_b+r_m);
         v = K_t_m*(omg_r) + i_m*r_m;
 
