@@ -46,6 +46,8 @@ global v_clamp r_b nu_style nu Vcg omg omg_r omg_b angles angle_r angle_s pitch1
         v = K_t_m*(omg_r) + i_m*r_m;
 
         M_mR = [0 0 K_t_m*i_m]; % in rotor frame
+        % Rebecca: these two should be the same since this should only be a rotation in the Z axis as long as the prop is aligned with the
+        % rotational motion which it always is, so dammit piccoli it's the same thing
         M_mF = M_mR*Rr_f; % in flyer frame
 
         %% Force caused by gravity in flyer frame
@@ -60,12 +62,12 @@ global v_clamp r_b nu_style nu Vcg omg omg_r omg_b angles angle_r angle_s pitch1
 
         %% Rotor rotational acceleration in rotor frame
         omg_rDot = Ir_r\((M_p*Rr_f'+M_mR).*[0 0 1])';
-%         omg_rDot = Ir_rF\((M_p+M_mR).*[0 0 1])'; %old
 
         %% Body rotational acceleration in flyer frame
         omg_bDot = Ib_bF\((M_d-M_mF).*[0 0 1])'; % z component spins body
 
         %% CG rotational acceleration
+        % (9): omg_b is the body yaw rate wrt the flyer frame
         MGyro1 = -cross3(omg,Ib_bF*(omg+[0; 0; omg_b]));
         MGyro2 = -cross3(omg,Ir_rF*(omg+Rr_f*[0; 0; omg_r+omg_b])); %rotor wrt body, so add ang vels
         omgDot = (Ib_bF+Ir_rF+I_tot)\((M_p+M_d-M_mF.*[1 1 0])'+MGyro1+MGyro2-Ib_bF*omg_bDot-Ir_rF*omg_rDot); %TODO:: omg_rDot in rotor frame, everything else in flyer!!!
@@ -77,10 +79,8 @@ global v_clamp r_b nu_style nu Vcg omg omg_r omg_b angles angle_r angle_s pitch1
         Rw_f = [cos(angles(2))*cos(angles(3)),sin(angles(1))*sin(angles(2))*cos(angles(3))-cos(angles(1))*sin(angles(3)),cos(angles(1))*sin(angles(2))*cos(angles(3))+sin(angles(1))*sin(angles(3)); cos(angles(2))*sin(angles(3)),sin(angles(1))*sin(angles(2))*sin(angles(3))+cos(angles(1))*cos(angles(3)),cos(angles(1))*sin(angles(2))*sin(angles(3))-sin(angles(1))*cos(angles(3));-sin(angles(2)),sin(angles(1))*cos(angles(2)),cos(angles(1))*cos(angles(2))];
         XeDot = Rw_f*Vcg;
 
-%         wind_noise_acc = GenerateWindNoise(t);
         wind_noise_acc = [0 0 0];
 
-%         dX = [nuDot; VcgDot(1); VcgDot(2); VcgDot(3); omgDot(1); omgDot(2); omgDot(3); omg_rDot(3); omg_bDot(3); anglesDot(1); anglesDot(2); anglesDot(3); omg_r; omg_b; XeDot(1)+wind_noise_acc(1); XeDot(2)+wind_noise_acc(2); XeDot(3)+wind_noise_acc(3); iDot];
         dX = [nuDot; VcgDot(1); VcgDot(2); VcgDot(3); omgDot(1); omgDot(2); 0; omg_rDot(3); omg_bDot(3) + omgDot(3); anglesDot(1); anglesDot(2); anglesDot(3); omg_r; omg_b; XeDot(1)+wind_noise_acc(1); XeDot(2)+wind_noise_acc(2); XeDot(3)+wind_noise_acc(3); iDot];
 
 end
