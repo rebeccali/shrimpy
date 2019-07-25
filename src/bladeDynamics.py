@@ -6,7 +6,7 @@ Rebecca Li 2019
 import numpy as np
 
 from aerodynamics import getAngleOfAttack, getLiftDragElement, getRelativeWind
-from shrimpClasses import BladeElementParameters, dummyShrimpState, PropellorType
+from shrimpClasses import BladeElementParameters, dummyShrimpState, PropellerType
 from shrimpClasses import defaultBodyPropParams, defaultShrimpParams  # TODO make this import prettier
 from mathUtil import rpm2RadiansPerSecond
 
@@ -41,7 +41,7 @@ def getElementForceMoment(params, state):
     alpha = getAngleOfAttack(gamma, params.pitch)
     (lift, drag) = getLiftDragElement(params.width, params.chord, rho, relativeWind_e, alpha)
 
-    # Forces in the propellor frame
+    # Forces in the propeller frame
     normalForce_e = lift * np.cos(gamma) + drag * np.sin(gamma)
     tangentialForce_e = -lift * np.sin(gamma) + drag * np.cos(gamma)
 
@@ -63,7 +63,7 @@ def testBladeElement(radius, chord, pitch, width):
 
     inflowVel = 1
     yawDot_b2e = rpm2RadiansPerSecond(500)
-    # Set up this particular propellor element
+    # Set up this particular propeller element
     bladeParams = BladeElementParameters(rho, pitch, width, radius, chord, bladeIndex,
                                          numBlades, height_b2e, inflowVel, yawDot_b2e)
 
@@ -76,12 +76,12 @@ def getBladeForceMoment(propParams, shrimpParams, state, bladeIndex):
     """Get the force moment of a single blade.
        Splits up the blade into n sections and evaluates a strip model for each
        section. Also decides inflow velocity and angular velocity based off of whether
-       it is the body or shaft propellor
+       it is the body or shaft propeller
        Arguments:
-           propParams: PropellorParameters
+           propParams: PropellerParameters
            shrimpParams: ShrimpParameters
            state: ShrimpState
-           bladeIndex: index of the blade in the propellor
+           bladeIndex: index of the blade in the propeller
     """
     n = 5  # The number of sections to split the blade into for element theory
     (radiusRoot, radiusTip) = propParams.radiusRootTip
@@ -91,15 +91,15 @@ def getBladeForceMoment(propParams, shrimpParams, state, bladeIndex):
     radii = np.linspace(radiusRoot, radiusTip, n)
     chords = np.linspace(propParams.chordRootTip[0], propParams.chordRootTip[1], n)
 
-    # Assign propellor specific characteristics
-    if propParams.propType == PropellorType.SHAFT:
+    # Assign propeller specific characteristics
+    if propParams.propType == PropellerType.SHAFT:
         inflowVel = state.inflowVel
         yawDot_b2p = state.yawDot_b2p
-    elif propParams.propType == PropellorType.BODY:
+    elif propParams.propType == PropellerType.BODY:
         inflowVel = 0
         yawDot_b2p = 0
     else:
-        raise Exception('Using unimplemented PropellorType!')
+        raise Exception('Using unimplemented PropellerType!')
 
     def getThisElemForceMoment(pitch, radius, chord):
         elementParams = BladeElementParameters(shrimpParams.rho, pitch, width, radius,
@@ -116,9 +116,9 @@ def getBladeForceMoment(propParams, shrimpParams, state, bladeIndex):
 
 
 def getPropForceMoment(propParams, shrimpParams, state):
-    """Computes the force across all blades in the propellor
+    """Computes the force across all blades in the propeller
         Arguments:
-        propParams: PropellorParameters to be iterated over
+        propParams: PropellerParameters to be iterated over
         shrimpParams: ShrimpParameters
         state: ShrimpState
     """

@@ -50,7 +50,7 @@ def flyerOde(odeState, t, p):
     rot_p2b = np.transpose(rot_b2p)
     rot_p2f = rot_p2b.dot(rot_b2f)
 
-    # Rotate some quanitities
+    # Rotate some quantities
     vel_w2b_f = rot_w2f.dot(s.vel_w2b_w)
     # velocity of cg flyer is the same as velocity of cg body
     vel_b2f_f = np.zeros(3)
