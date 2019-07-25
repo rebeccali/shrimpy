@@ -1,7 +1,7 @@
 # SHRIMP
 Repository for SHRIMP robot dynamics simulation.
 
-Maintained by Allen Yu (fangzhyu at seas.upenn.edu) and Rebecca Li (robot at seas.upenn.edu).
+Maintained by Rebecca Li (robot at seas.upenn.edu) and Allen Yu (fangzhyu at seas.upenn.edu)
 
 
 # Repository Structure
@@ -33,7 +33,7 @@ This will be eventually integrated into CI
 
 0. Make sure Jupyter notebook is installed.  This comes with Anaconda, but otherwise follow installation instructions from https://jupyter.org/.
 1. Run `jupyter notebook` in this directory.
-2. From the browser interface, open up `src/RageSimulator.ipynb`.
+2. From the browser interface, open up `src/ShrimpSimulator.ipynb`.
 3. Run all cells.
 
 ## Running an UNO simulation:
@@ -52,6 +52,10 @@ The python aspects requires python.
 3. Test that the environment exists by opening a new terminal and running `source activate shrimp`. This is the new python environment with libraries preloaded.
 4. When running any of the `ShrimpSimulator` files, use this environment.
 5. During development, be sure to update `environment.yml` if you install any new packages.
+
+## The `src/matlab` folder
+An old attempt at matlab simulation.
+TODO(Allen): documentation
 
 ## Tasks to Do:
 * Set up CI
