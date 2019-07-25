@@ -6,7 +6,10 @@ Maintained by Allen Yu (fangzhyu at seas.upenn.edu) and Rebecca Li (robot at sea
 
 # Repository Structure
 
-The new simulation code is in `src`. The latest simulator is `RageSim`, which is simply a python notebook and self explanatory. For `RageSim`, you will need the conda environment which you can install as described in the `Python Installation section`
+The new simulation code is in `src`. You can quickly run a simulation by running `runSim.py`. It is connected to many of the other files in the `src` folder. For this simulation, you will need the conda environment which you can install as described in the `Python Installation`section.
+
+
+The second simulator is `ShrimpSimulator`, which is simply a python notebook and self explanatory. For `ShrimpSimulator`, you will need the conda environment which you can install as described in the `Python Installation` section.
 
 
 The old simulation code is contained within `piccolissimo`. Each simulation is slighlty different:
@@ -15,7 +18,18 @@ The old simulation code is contained within `piccolissimo`. Each simulation is s
 * `generic_sim` is for a generic simulator, but is difficult to use.
 * `simple_sim` is a simple simulator, but is difficult to use.
 
-## Running `RageSim`:
+## Running a native python simulation:
+You can either run or test the code. To run the code, simply type
+
+`python src/runSim.py`
+
+During development, be sure to also run
+
+`python src/test.py`
+
+This will be eventually integrated into CI
+
+## Running `ShrimpSimulator` Notebook :
 
 0. Make sure Jupyter notebook is installed.  This comes with Anaconda, but otherwise follow installation instructions from https://jupyter.org/.
 1. Run `jupyter notebook` in this directory.
@@ -30,18 +44,15 @@ Currently, there are two ways to run simulations
 * `RunOptimizeBetaD.m` runs a series of simulations in order to calculate the shape of the body stabilizers. It is not actively maintained.
 
 
-## Installing Python for `RageSim`
-RageSim requires python.
+## Python Installation
+The python aspects requires python.
 
 1. Install Miniconda or Anaconda https://docs.conda.io/en/latest/miniconda.html
 2. Install the python environment `conda env create -f environment.yml -n`.
 3. Test that the environment exists by opening a new terminal and running `source activate shrimp`. This is the new python environment with libraries preloaded.
-4. When running any of the `RageSim` files, use this environment.
+4. When running any of the `ShrimpSimulator` files, use this environment.
 5. During development, be sure to update `environment.yml` if you install any new packages.
 
 ## Tasks to Do:
-* Remove globals
-* Make a better simulation visualization
-* Clean up configuration files
-* Write documentation on using configuration files
-
+* Set up CI
+* Test out

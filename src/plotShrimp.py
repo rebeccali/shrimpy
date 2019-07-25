@@ -9,15 +9,15 @@ import matplotlib.pyplot as plt
 def plot4(name, a, b, c, d, ts):
     """Plot 3 values a,b,c, and their associated times"""
 
-    def plotState(state, name):
+    def plotState(state, ylab):
         """ Helper fun """
         plt.plot(ts, state, "-")
-        plt.ylabel(name)
+        plt.ylabel(ylab)
 
     plt.figure()
-    plt.title(name)
     ax = plt.subplot(411)
     plotState(a[0], a[1])
+    plt.title(name)
     plt.subplot(412, sharex=ax)
     plotState(b[0], b[1])
     plt.subplot(413, sharex=ax)
@@ -30,15 +30,15 @@ def plot4(name, a, b, c, d, ts):
 def plot3(name, a, b, c, ts):
     """Plot 3 values a,b,c, and their associated times"""
 
-    def plotState(state, name):
+    def plotState(state, ylab):
         """ Helper fun """
         plt.plot(ts, state, "-")
-        plt.ylabel(name)
+        plt.ylabel(ylab)
 
     plt.figure()
-    plt.title(name)
     ax = plt.subplot(311)
     plotState(a[0], a[1])
+    plt.title(name)
     plt.subplot(312, sharex=ax)
     plotState(b[0], b[1])
     plt.subplot(313, sharex=ax)
@@ -105,10 +105,10 @@ def plotYaws(odeStates, times):
     yaw_f2b = odeStates[:, 14]
     yaw_b2p = odeStates[:, 15]
 
-    a = (yaw_f2b, 'yaw_f2b (body relative to flyer) [rad/s]')
-    b = (yawDot_f2b, 'yawDot_f2b (body spin rate) [rad/s]')
-    c = (yaw_b2p, 'yaw_b2p (prop relative to body) [rad/s]')
-    d = (yawDot_b2p, 'yawDot_b2p (propellor spin rate) [rad/s]')
+    a = (yaw_f2b, 'yaw_f2b  [rad/s]')
+    b = (yawDot_f2b, 'yawDot_f2b  [rad/s]')
+    c = (yaw_b2p, 'yaw_b2p  [rad/s]')
+    d = (yawDot_b2p, 'yawDot_b2p  [rad/s]')
     name = "Yaw angular position and velocities"
     plot4(name, a, b, c, d, times)
 
