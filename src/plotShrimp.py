@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-
+"""
+Plots for Shrimp Project
+Rebecca Li 2019
+"""
 import matplotlib.pyplot as plt
 
 
