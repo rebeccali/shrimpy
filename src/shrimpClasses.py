@@ -6,9 +6,8 @@ Rebecca Li 2019
 
 from enum import Enum
 import numpy as np
-from scipy.spatial.transform import Rotation as R
 
-from mathUtil import addYaw, euler2Rotm, rotm2Euler, rpm2RadiansPerSecond
+from mathUtil import addYaw, euler2Rotm, rotm2Euler, rotmFromYaw, rpm2RadiansPerSecond
 
 
 class PropellerType(Enum):
@@ -80,7 +79,7 @@ class ShrimpParameters:
 
 
 def getRotsFromEuler(euler_w2b, yaw_f2b):
-    rot_f2b = R.from_euler('z', yaw_f2b).as_dcm()
+    rot_f2b = rotmFromYaw(yaw_f2b)
     rot_w2b = euler2Rotm(euler_w2b)
     rot_b2w = np.transpose(rot_w2b)
     rot_f2w = rot_f2b.dot(rot_b2w)
