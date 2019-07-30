@@ -5,11 +5,13 @@ Rebecca Li 2019
 """
 import numpy as np
 from scipy.integrate import odeint
+from timeit import default_timer as timer
 
 from mathUtil import rpm2RadiansPerSecond
 from plotShrimp import plotOdeStates
 from shrimpOde import flyerOde
 from shrimpClasses import defaultShrimpParams
+from shrimpVisualizer import drawShrimp
 
 
 def initialOdeState():
@@ -34,21 +36,29 @@ def initialOdeState():
     return odeState
 
 
-def runSimulation(tf=1.0):
+def runSimulation(tf=0.3, plot=False, viz=False, test=False):
     """ Run a sim!"""
     y0 = initialOdeState()
     parameters = defaultShrimpParams()
     dt = 0.01
     t = np.arange(0, tf, dt)
+    print('Simulating shrimp...')
+    startTime = timer()
     states = odeint(flyerOde, y0, t, args=(parameters,))
-    plotOdeStates(states, t)
-    return (states, t)
+    endTime = timer()
+    print('Time elapsed for simulation: %f' % (endTime - startTime))
+    if plot:
+        plotOdeStates(states, t, test)
+    if viz:
+        drawShrimp(parameters, t, states, autoplay=True)
+    return parameters, states, t
 
 
 def testRunSim():
     """Test stuff"""
-    runSimulation(tf=0.5)
+    runSimulation(tf=0.3, plot=True, test=True)
 
 
 if __name__ == "__main__":
-    runSimulation()
+    # TODO: add args
+    runSimulation(tf=1.13, plot=True, viz=True)

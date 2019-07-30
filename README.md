@@ -98,6 +98,6 @@ Please use the `euler2Rotm` and `rotm2Euler` functions for converting between ro
 
 ## Tasks to Do:
 * Set up CI
-* Write better tests
-* add some comments on ambiguous topics
+* Write better tests - turn all testing modules into errors
+* Add GIF output for shrimpVisualizer
 * Hook up inflow velocity

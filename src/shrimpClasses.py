@@ -61,12 +61,22 @@ class MotorParameters:
         self.resistance = resistance  # stator resistance, assumed constant heh
 
 
+class ShrimpVizParameters:
+    """Parameters for a visualization """
+
+    def __init__(self, bodyWidth, bodyHeight, propDiscRadius, propDiscThickness):
+        self.propDiscRadius = propDiscRadius
+        self.propDiscThickness = propDiscThickness
+        self.bodyWidth = bodyWidth
+        self.bodyHeight = bodyHeight
+
+
 class ShrimpParameters:
     """ Parameters of Shrimp Aircraft.
     """
 
     def __init__(self, bodyPropParams, shaftPropParams, bodyMass, Ixx, Iyy, Izz,
-                 propIxx, propIyy, propIzz, rho, motorParams, batteryParams, propMass):
+                 propIxx, propIyy, propIzz, rho, motorParams, batteryParams, propMass, vizParams):
         self.bodyPropParams = bodyPropParams
         self.shaftPropParams = shaftPropParams
         self.bodyMass = bodyMass  # mass of everything attached to stator, so not rotor and prop
@@ -76,6 +86,7 @@ class ShrimpParameters:
         self.motorParams = motorParams
         self.batteryParams = batteryParams
         self.propMass = propMass
+        self.vizParams = vizParams
 
 
 def getRotsFromEuler(euler_w2b, yaw_f2b):
@@ -229,8 +240,15 @@ def defaultShrimpParams():
     rho = 1.225
     motorParams = defaultMotorParams()
     batteryParams = defaultBatteryParams()
+
+    propDiscRadius = shaftPropParams.radiusRootTip[1]
+    propDiscThickness = max(shaftPropParams.chordRootTip) * np.cos(max(shaftPropParams.pitchRootTip))
+    bodyWidth = 0.005
+    bodyHeight = 0.003
+    vizParams = ShrimpVizParameters(bodyWidth, bodyHeight, propDiscRadius, propDiscThickness)
+
     return ShrimpParameters(bodyPropParams, shaftPropParams, massBody, Ixx, Iyy, Izz,
-                            propIxx, propIyy, propIzz, rho, motorParams, batteryParams, propMass)
+                            propIxx, propIyy, propIzz, rho, motorParams, batteryParams, propMass, vizParams)
 
 
 def dummyShrimpState():
