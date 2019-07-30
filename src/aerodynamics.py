@@ -69,8 +69,11 @@ def getRelativeWind(bladeIndex, numBlades, bladeRadius, vel_w2b_w,
 
     # Sum all forces together
     relativeWind_e = -(vel_w2b_e + vel_b2e_e) + vel_inducedInflow_e
-    x_comp = relativeWind_e[0]
-    z_comp = relativeWind_e[2]
+    # The arctan calculation is negative because this is part of the angle of attack perspective
+    # e.g. if wind is [-1, 0, -1] in the element frame, it's coming from the upper right, so the angle of
+    # attack should be positive 45 deg
+    x_comp = -relativeWind_e[0]
+    z_comp = -relativeWind_e[2]
     relWindAngleGamma = np.arctan2(z_comp, x_comp)
 
     return (relativeWind_e, relWindAngleGamma, r_b2e_b, rot_b2e)
@@ -121,7 +124,7 @@ def testRelativeWind():
     (relWind2, gamma2, r_b2e_b2, rot_b2e2) = getRelativeWind(bladeIndex, numBlades, bladeRadius, vel_w2b_w,
                                                              rot_w2b, angvel_w2b_b, inflowVelocity, height_b2e,
                                                              yawDot_b2e)
-    zrot = rotmFromYaw(0.5 * np.pi) # wing x-axis is 90 degrees to the radial direction, y-axis points in
+    zrot = rotmFromYaw(0.5 * np.pi)  # wing x-axis is 90 degrees to the radial direction, y-axis points in
     if not np.allclose(rot_b2e2, zrot):
         print('ERR: rot_b2e2 :', rot_b2e2)
         print('!= 90 deg rotation:', zrot)
