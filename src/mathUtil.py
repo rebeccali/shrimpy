@@ -36,6 +36,9 @@ def addYaw(eulerAngles, yaw):
     """ Add yaw in a safe way since we want to control ZXY from here"""
     return eulerAngles + np.array([yaw, 0, 0])
 
+def rotmFromYaw(yaw_a2b):
+    """ Returns rot_a2b rotation matrix about z-axis from a to b """
+    return R.from_euler('z', -yaw_a2b).as_dcm()
 
 def getYaw(eulerAngle):
     return eulerAngle[0]
@@ -101,3 +104,14 @@ def testMathUtil():
     yaw = np.pi / 2
     print('eul', eul)
     print("Should be pi, 0, 0", addYaw(eul, yaw))
+
+    yaw_a2b = 90*np.pi/180
+    rot_a2b = rotmFromYaw(yaw)
+    expected90deg = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])
+
+    if not np.allclose(rot_a2b, expected90deg):
+        print('ERR: rotmFromYaw')
+        print('Should be 90 degree rotation!')
+        print(yaw_a2b)
+        print('!= ')
+        print(expected90deg)
