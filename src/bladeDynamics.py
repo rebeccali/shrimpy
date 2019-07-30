@@ -128,6 +128,14 @@ def getPropForceMoment(propParams, shrimpParams, state):
     moments_b = sum([m for _, m in forceMomentTuples_b])
     return (forces_b, moments_b)
 
+def getThrustTorquePropellor(propParams):
+    """ Calculate the thrust and drag of a propeller. Do this by calculating the aerodynamic forces
+        and moments at still, then converting these to thrust and drag.
+        Arguments:
+            propParams: PropellerParameters
+    """
+    # change the propeller type to a shaft type
+    # TODO: complete
 
 def testPropForceMoment():
     propParams = defaultBodyPropParams()
