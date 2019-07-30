@@ -14,6 +14,11 @@ The python aspects requires python.
 4. When running any of the `ShrimpSimulator` files, use this environment.
 5. During development, be sure to update `environment.yml` if you install any new packages.
 
+
+Note that should you ever need to update the conda environment, after updating run the following command:
+
+`conda env export > environment,yml`
+
 ## Run a test:
 
 `python src/runSim.py`
