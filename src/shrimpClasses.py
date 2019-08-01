@@ -6,12 +6,11 @@ Rebecca Li 2019
 
 from enum import Enum
 import numpy as np
-from scipy.spatial.transform import Rotation as R
 
-from mathUtil import addYaw, euler2Rotm, rotm2Euler, rpm2RadiansPerSecond
+from mathUtil import addYaw, euler2Rotm, rotm2Euler, rotmFromYaw, rpm2RadiansPerSecond
 
 
-class PropellorType(Enum):
+class PropellerType(Enum):
     SHAFT = 1
     BODY = 2
 
@@ -31,9 +30,9 @@ class BladeElementParameters:
         self.yawDot_b2e = yawDot_b2e  # spin velocity of prop about body z axis for this element. Scalar [m/s]
 
 
-class PropellorParameters:
-    """Parameters of all blades in the propellor
-       Assumes propellor center is aligned in the z-axis with the body center of mass.
+class PropellerParameters:
+    """Parameters of all blades in the propeller
+       Assumes propeller center is aligned in the z-axis with the body center of mass.
     """
 
     def __init__(self, numBlades, pitchRootTip, radiusRootTip, chordRootTip,
@@ -42,8 +41,8 @@ class PropellorParameters:
         self.pitchRootTip = pitchRootTip  # Tuple of blade pitch, (root, tip)
         self.radiusRootTip = radiusRootTip  # Tuple, (root, tip)
         self.chordRootTip = chordRootTip  # Tuple, (root, tip)
-        self.height_b2p = height_b2p  # Z-axis distance from cg to propellor, +z is up
-        self.propType = propType  # PropellorType Enum
+        self.height_b2p = height_b2p  # Z-axis distance from cg to propeller, +z is up
+        self.propType = propType  # PropellerType Enum
 
 
 class BatteryParameters:
@@ -62,12 +61,22 @@ class MotorParameters:
         self.resistance = resistance  # stator resistance, assumed constant heh
 
 
+class ShrimpVizParameters:
+    """Parameters for a visualization """
+
+    def __init__(self, bodyWidth, bodyHeight, propDiscRadius, propDiscThickness):
+        self.propDiscRadius = propDiscRadius
+        self.propDiscThickness = propDiscThickness
+        self.bodyWidth = bodyWidth
+        self.bodyHeight = bodyHeight
+
+
 class ShrimpParameters:
     """ Parameters of Shrimp Aircraft.
     """
 
     def __init__(self, bodyPropParams, shaftPropParams, bodyMass, Ixx, Iyy, Izz,
-                 propIxx, propIyy, propIzz, rho, motorParams, batteryParams, propMass):
+                 propIxx, propIyy, propIzz, rho, motorParams, batteryParams, propMass, vizParams):
         self.bodyPropParams = bodyPropParams
         self.shaftPropParams = shaftPropParams
         self.bodyMass = bodyMass  # mass of everything attached to stator, so not rotor and prop
@@ -77,10 +86,11 @@ class ShrimpParameters:
         self.motorParams = motorParams
         self.batteryParams = batteryParams
         self.propMass = propMass
+        self.vizParams = vizParams
 
 
 def getRotsFromEuler(euler_w2b, yaw_f2b):
-    rot_f2b = R.from_euler('z', yaw_f2b).as_dcm()
+    rot_f2b = rotmFromYaw(yaw_f2b)
     rot_w2b = euler2Rotm(euler_w2b)
     rot_b2w = np.transpose(rot_w2b)
     rot_f2w = rot_f2b.dot(rot_b2w)
@@ -99,10 +109,10 @@ class ShrimpState:
         self.vel_w2b_w = vel_w2b_w  # np.array 3x1 velocity vector from world origin to body/cg
         self.euler_w2b = euler_w2b  # np.array 3x1 euler from world to body frame
         self.angvel_w2b_b = angvel_w2b_b  # np.array 3x1 angular velocity of the body in the body frame
-        self.inflowVel = inflowVel  # scalar inflow velocity adjustment due to duct on the shaft propellor [m/s]
-        self.yaw_b2p = yaw_b2p  # the angle from the stator/body to the rotor/propellor
+        self.inflowVel = inflowVel  # scalar inflow velocity adjustment due to duct on the shaft propeller [m/s]
+        self.yaw_b2p = yaw_b2p  # the angle from the stator/body to the rotor/propeller
         self.yaw_f2b = yaw_f2b  # the angle from the flyer frame to the body frame
-        # the speed of the spin of the propellor relative to the body/stator. Scalar [rad/s]
+        # the speed of the spin of the propeller relative to the body/stator. Scalar [rad/s]
         self.yawDot_b2p = yawDot_b2p
         self.yawDot_f2b = yawDot_f2b  # the speed of the spin of the body relative to the flyer frame. Scalar [rad/s]
         self.rot_f2b = rot_f2b
@@ -168,7 +178,7 @@ class ShrimpState:
 
 def defaultShaftPropParams():
     """ Parameters for Cheerson
-        Data from propellor_cheerson_cx10.m
+        Data from propeller_cheerson_cx10.m
     """
     numBlades = 2
     # TODO: do pitches/radius with interpolable sections
@@ -176,21 +186,21 @@ def defaultShaftPropParams():
     chordRootTip = (3.22e-3, 4.12e-3)
     radiusRootTip = (0, 0.0146)
     height_b2p = -1.55 / 1000  # Piccolissimo_V11, positive is UP
-    propType = PropellorType.SHAFT
-    return PropellorParameters(numBlades, pitchRootTip, radiusRootTip, chordRootTip,
+    propType = PropellerType.SHAFT
+    return PropellerParameters(numBlades, pitchRootTip, radiusRootTip, chordRootTip,
                                height_b2p, propType)
 
 
 def defaultBodyPropParams():
-    """ Parametersfor body_Piccolissimo_V11"""
+    """ Parameters for body_Piccolissimo_V11"""
     numBlades = 6
     # TODO: do pitches/radius with interpolable sections
     pitchRootTip = (0.15359, 0.7927)
     chordRootTip = (0.0135, 0.0054)
     radiusRootTip = (0, 19.16e-3)
     height_b2p = 2.56 / 1000  # Piccolissimo_V11, positive is UP
-    propType = PropellorType.BODY
-    return PropellorParameters(numBlades, pitchRootTip, radiusRootTip, chordRootTip,
+    propType = PropellerType.BODY
+    return PropellerParameters(numBlades, pitchRootTip, radiusRootTip, chordRootTip,
                                height_b2p, propType)
 
 
@@ -220,7 +230,7 @@ def defaultShrimpParams():
     Iyy = inertiaAdjustment * 439e-9
     Izz = inertiaAdjustment * 697e-9
 
-    # Taken from propellor_cheerson_cx10.m Though this describes the rotor mass/inertia
+    # Taken from propeller_cheerson_cx10.m Though this describes the rotor mass/inertia
     # as well
     propIxx = 3.95e-9
     propIyy = 6.31e-9
@@ -230,8 +240,15 @@ def defaultShrimpParams():
     rho = 1.225
     motorParams = defaultMotorParams()
     batteryParams = defaultBatteryParams()
+
+    propDiscRadius = shaftPropParams.radiusRootTip[1]
+    propDiscThickness = max(shaftPropParams.chordRootTip) * np.cos(max(shaftPropParams.pitchRootTip))
+    bodyWidth = 0.005
+    bodyHeight = 0.003
+    vizParams = ShrimpVizParameters(bodyWidth, bodyHeight, propDiscRadius, propDiscThickness)
+
     return ShrimpParameters(bodyPropParams, shaftPropParams, massBody, Ixx, Iyy, Izz,
-                            propIxx, propIyy, propIzz, rho, motorParams, batteryParams, propMass)
+                            propIxx, propIyy, propIzz, rho, motorParams, batteryParams, propMass, vizParams)
 
 
 def dummyShrimpState():

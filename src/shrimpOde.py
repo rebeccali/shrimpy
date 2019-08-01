@@ -4,12 +4,11 @@ Shrimp Ode/equations of motion for Shrimp Project
 Rebecca Li 2019
 """
 import numpy as np
-from scipy.spatial.transform import Rotation as R
 
 from bladeDynamics import getPropForceMoment
 from shrimpController import shrimpController
 from shrimpClasses import ShrimpState, defaultShrimpParams
-from mathUtil import rotateTensor, angVel2EulerAngleVel
+from mathUtil import angVel2EulerAngleVel, rotateTensor, rotmFromYaw
 
 
 def flyerOde(odeState, t, p):
@@ -46,11 +45,11 @@ def flyerOde(odeState, t, p):
     rot_f2w = s.rot_f2w
     rot_w2f = np.transpose(rot_f2w)
     rot_b2f = np.transpose(rot_f2b)
-    rot_b2p = R.from_euler('Z', s.yaw_b2p).as_dcm()
+    rot_b2p = rotmFromYaw(s.yaw_b2p)
     rot_p2b = np.transpose(rot_b2p)
     rot_p2f = rot_p2b.dot(rot_b2f)
 
-    # Rotate some quanitities
+    # Rotate some quantities
     vel_w2b_f = rot_w2f.dot(s.vel_w2b_w)
     # velocity of cg flyer is the same as velocity of cg body
     vel_b2f_f = np.zeros(3)

@@ -7,34 +7,41 @@ Rebecca Li 2019
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 
+_eulerConvention = 'ZXY'
+
 
 def rotm2Euler(x):
     """Rotation matrix to Euler Angles ZXY intrinsic vector for Shrimp"""
     r = R.from_dcm(x)
-    return r.as_euler('ZXY')
+    return r.as_euler(_eulerConvention)
 
 
 def euler2Rotm(x):
     """Euler angles ZXY intrinsic vector to Rotation Matrix for Shrimp"""
-    r = R.from_euler('ZXY', x)
+    r = R.from_euler(_eulerConvention, x)
     return r.as_dcm()
 
 
 def quat2Euler(x):
     """Quaterion to Euler Angles ZXY intrinsic vector for Shrimp"""
     r = R.from_quat(x)
-    return r.as_euler('ZXY')
+    return r.as_euler(_eulerConvention)
 
 
 def euler2Quat(x):
     """Euler angles ZXY intrinsic vector to Quaternion for Shrimp"""
-    r = R.from_quat('ZXY', x)
+    r = R.from_quat(_eulerConvention, x)
     return r.as_euler()
 
 
 def addYaw(eulerAngles, yaw):
     """ Add yaw in a safe way since we want to control ZXY from here"""
     return eulerAngles + np.array([yaw, 0, 0])
+
+
+def rotmFromYaw(yaw_a2b):
+    """ Returns rot_a2b rotation matrix about z-axis from a to b """
+    return R.from_euler('z', -yaw_a2b).as_dcm()
 
 
 def getYaw(eulerAngle):
@@ -47,6 +54,12 @@ def getPitch(eulerAngle):
 
 def getRoll(eulerAngle):
     return eulerAngle[2]
+
+
+def eulerExtXYZfromEulerShrimp(x):
+    """Converts euler extrinsic from eulerShrimp"""
+    eulerExtrinsic = R.from_euler(_eulerConvention, x).as_euler('xyz')
+    return eulerExtrinsic
 
 
 def angVel2EulerAngleVel(pqr, eulerZXY):
@@ -101,3 +114,14 @@ def testMathUtil():
     yaw = np.pi / 2
     print('eul', eul)
     print("Should be pi, 0, 0", addYaw(eul, yaw))
+
+    yaw_a2b = 90 * np.pi / 180
+    rot_a2b = rotmFromYaw(yaw)
+    expected90deg = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])
+
+    if not np.allclose(rot_a2b, expected90deg):
+        print('ERR: rotmFromYaw')
+        print('Should be 90 degree rotation!')
+        print(yaw_a2b)
+        print('!= ')
+        print(expected90deg)

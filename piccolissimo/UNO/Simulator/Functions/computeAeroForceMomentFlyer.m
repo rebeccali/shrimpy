@@ -3,7 +3,7 @@ function [forcesAeroBody_f, momentsAeroBody_f, forcesProp_f, momentsProp_f aoa_b
 %  Returns the forces in the flyer frame, moments in the flyer frame,
 %  angle of attack of the body blades, angle of attack of prop blades
 
-% B_p is the number of propellor blades (shaft propellor)
+% B_p is the number of propeller blades (shaft propeller)
 % B_d is the number of body drag plates
 
     %% First Calculate Body drag plates
@@ -29,7 +29,7 @@ function [forcesAeroBody_f, momentsAeroBody_f, forcesProp_f, momentsProp_f aoa_b
         aoa_body(:,drag_blade) = aoa;
     end
 
-    %% Calculate Propellor drag plates
+    %% Calculate Propeller drag plates
     % propeller blades computed in rotor frame
     F_p = zeros(length(beta_p),3);
     M_p = zeros(length(beta_p),3);

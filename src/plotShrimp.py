@@ -113,7 +113,7 @@ def plotYaws(odeStates, times):
     plot4(name, a, b, c, d, times)
 
 
-def plotOdeStates(odeStates, times):
+def plotOdeStates(odeStates, times, test=False):
     """ Plot all the things.
         Arguments:
             odeStates (np.ndarray): nx16 array of odeState vectors
@@ -124,4 +124,5 @@ def plotOdeStates(odeStates, times):
     plotEuler(odeStates, times)
     plotAngVel(odeStates, times)
     plotYaws(odeStates, times)
-    plt.show()
+    if not test:
+        plt.show()
