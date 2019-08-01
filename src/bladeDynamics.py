@@ -7,8 +7,8 @@ import numpy as np
 
 from aerodynamics import getAngleOfAttack, getLiftDragElement, getRelativeWind
 from shrimpClasses import BladeElementParameters, dummyShrimpState, PropellerType
-from shrimpClasses import defaultBodyPropParams, defaultShrimpParams  # TODO make this import prettier
-from mathUtil import rpm2RadiansPerSecond
+from shrimpClasses import defaultBodyPropParams, defaultShrimpParams, zeroShrimpState  # TODO make this import prettier
+from mathUtil import rpm2RadiansPerSecond, rotPerSec2RadiansPerSecond
 
 
 def getElementForceMoment(params, state):
@@ -50,7 +50,7 @@ def getElementForceMoment(params, state):
 
     rot_e2b = np.transpose(rot_b2e)
     forces_b = rot_e2b.dot(forces_e)
-    moments_b = np.cross(forces_b, r_b2e_b)
+    moments_b = np.cross(r_b2e_b, forces_b)
 
     return(forces_b, moments_b)
 
@@ -126,16 +126,8 @@ def getPropForceMoment(propParams, shrimpParams, state):
                            for i in range(propParams.numBlades)]
     forces_b = sum([f for f, _ in forceMomentTuples_b])
     moments_b = sum([m for _, m in forceMomentTuples_b])
-    return (forces_b, moments_b)
+    return forces_b, moments_b
 
-def getThrustTorquePropellor(propParams):
-    """ Calculate the thrust and drag of a propeller. Do this by calculating the aerodynamic forces
-        and moments at still, then converting these to thrust and drag.
-        Arguments:
-            propParams: PropellerParameters
-    """
-    # change the propeller type to a shaft type
-    # TODO: complete
 
 def testPropForceMoment():
     propParams = defaultBodyPropParams()

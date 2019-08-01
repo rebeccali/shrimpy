@@ -97,6 +97,10 @@ def rpm2RadiansPerSecond(x: float) -> float:
     return 0.10472 * x
 
 
+def rotPerSec2RadiansPerSecond(x: float) -> float:
+    return np.pi * 2 * x
+
+
 def testMathUtil():
     eul = np.array([np.pi / 2, 0, 0])
     print('eul', eul)
