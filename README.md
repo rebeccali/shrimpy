@@ -10,14 +10,14 @@ The python aspects requires python.
 
 1. Install Miniconda or Anaconda https://docs.conda.io/en/latest/miniconda.html
 2. Install the python environment `conda env create -f environment.yml -n`.
-3. Test that the environment exists by opening a new terminal and running `source activate shrimp`. This is the new python environment with libraries preloaded.
+3. Test that the environment exists by opening a new terminal and running `source activate shrimp`. This is the new python environment with libraries pre-loaded.
 4. When running any of the `ShrimpSimulator` files, use this environment.
 5. During development, be sure to update `environment.yml` if you install any new packages.
 
 
 Note that should you ever need to update the conda environment, after updating run the following command:
 
-`conda env export > environment,yml`
+`conda env export > environment.yml`
 
 ## Run a test:
 
@@ -36,9 +36,9 @@ The new simulation code is in `src`. You can quickly run a simulation by running
 The second simulator is `ShrimpSimulator`, which is simply a python notebook and self explanatory. For `ShrimpSimulator`, you will need the conda environment which you can install as described in the `Python Installation` section.
 
 
-The old simulation code is contained within `piccolissimo`. Each simulation is slighlty different:
+The old simulation code is contained within `piccolissimo`. Each simulation is slightly different:
 
-* `UNO` is the simulator in active development for the SHIRMP project.
+* `UNO` is the simulator in active development for the SHRIMP project.
 * `generic_sim` is for a generic simulator, but is difficult to use.
 * `simple_sim` is a simple simulator, but is difficult to use.
 
@@ -72,7 +72,7 @@ TODO: this, as well as discussing the difference in notation, such as `Rr_f` vs 
 
 
 ## The `src/matlab` folder
-An old attempt at matlab simulation.
+An old attempt at MATLAB simulation.
 TODO(Allen): documentation
 
 
@@ -89,11 +89,11 @@ By far the easiest way to get up to speed is to read through the `src/ShrimpSimu
 ### Euler Angles Convention
 For euler angles, we are using the `scipy` library of `spatial.transform` with `Rotation`. https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.transform.Rotation.html#scipy.spatial.transform.Rotation
 
-This uses the capital notation `ZXY` to denote intrinsic rotations, which we will use such that the final rotation is about the rotational axis of the vehicle for readibility. This is such that the first rotation is about the Z axis, or corresponds to the yaw.
+This uses the capital notation `ZXY` to denote intrinsic rotations, which we will use such that the final rotation is about the rotational axis of the vehicle for readability. This is such that the first rotation is about the Z axis, or corresponds to the yaw.
 This matches the MEAM 620 project 1 convention.
 Additionally, the euler angles are $\phi, \theta, \psi$, where $\phi$ is yaw.
 
-Please use the `euler2Rotm` and `rotm2Euler` functions for converting between rotation matricies and euler angle vectors.
+Please use the `euler2Rotm` and `rotm2Euler` functions for converting between rotation matrices and euler angle vectors.
 
 
 ## Tasks to Do:
