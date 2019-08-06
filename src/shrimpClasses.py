@@ -261,11 +261,13 @@ def defaultShrimpParams():
     return ShrimpParameters(bodyPropParams, shaftPropParams, massBody, Ixx, Iyy, Izz,
                             propIxx, propIyy, propIzz, rho, motorParams, batteryParams, propMass, vizParams)
 
+
 def zeroShrimpState():
     """ Generates Shrimp state where everything is zero/nominal """
     odeState = np.zeros(16)
     state = ShrimpState.fromOdeState(odeState)
     return state
+
 
 def dummyShrimpState():
     r_w2b_w = np.array([6, 20, 1])

@@ -154,6 +154,13 @@ def getAngleOfAttack(bladePitch, relWindAngleGamma):
     unwrapped_angle = bladePitch + relWindAngleGamma
     return (unwrapped_angle + np.pi) % (2 * np.pi) - np.pi
 
+def cl2412LowRe(alpha):
+    """ Coeff of Lift for NACA 2412 according to XFLR5 at ~Re=10000"""
+    return (alpha*180./np.pi) * 1.2/30.
+
+def cd2412LowRe(alpha):
+    """ Coeff of Drag for NACA 2412 according to XFLR5 at ~Re=10000"""
+    return 0.05 + 0.5/40. * (alpha * 180/np.pi)
 
 def clFlatPlate(alpha):
     """ Coeff of lift for a Flat Plate """
@@ -185,6 +192,8 @@ def getLiftDragElement(elementWidth, chord, rho, relWind_e, alpha):
     speed = relWind_e.dot([1, 0, 1])
     coeffLift = clFlatPlate(alpha)
     coeffDrag = cdFlatPlate(alpha)
+    # coeffLift = cl2412LowRe(alpha)
+    # coeffDrag = cd2412LowRe(alpha)
     quantity = 0.5 * speed * speed * chord * elementWidth * rho
     lift = quantity * coeffLift
     drag = quantity * coeffDrag
