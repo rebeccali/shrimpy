@@ -14,6 +14,7 @@ from shrimpController import testShrimpController
 from shrimpOde import testShrimpOde
 from runSim import testRunSim
 from shrimpVisualizer import testShrimpVisualizer
+from calculateThrustTorqueProp import testThrustTorqueProp
 
 print('Beginning Shrimp Project Testing')
 testMathUtil()
@@ -24,6 +25,7 @@ testShrimpController()
 testShrimpOde()
 testRunSim()
 testShrimpVisualizer()
+testThrustTorqueProp()
 print('All Tests Passed.')
 # Note: can't use sys exit because vpython does not respond to that. Go figure.
 os._exit(0)

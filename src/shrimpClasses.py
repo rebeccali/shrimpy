@@ -6,6 +6,7 @@ Rebecca Li 2019
 
 from enum import Enum
 import numpy as np
+from scipy.interpolate import interp1d
 
 from mathUtil import addYaw, euler2Rotm, rotm2Euler, rotmFromYaw, rpm2RadiansPerSecond
 
@@ -35,14 +36,22 @@ class PropellerParameters:
        Assumes propeller center is aligned in the z-axis with the body center of mass.
     """
 
-    def __init__(self, numBlades, pitchRootTip, radiusRootTip, chordRootTip,
+    def __init__(self, numBlades, radiusRootTip, getPitchFromRadius, getChordFromRadius,
                  height_b2p, propType):
         self.numBlades = numBlades
-        self.pitchRootTip = pitchRootTip  # Tuple of blade pitch, (root, tip)
         self.radiusRootTip = radiusRootTip  # Tuple, (root, tip)
-        self.chordRootTip = chordRootTip  # Tuple, (root, tip)
         self.height_b2p = height_b2p  # Z-axis distance from cg to propeller, +z is up
         self.propType = propType  # PropellerType Enum
+        self.getPitchFromRadius = getPitchFromRadius  # Function that takes radius and returns pitch at that point
+        self.getChordFromRadius = getChordFromRadius  # Function that takes radius and returns pitch at that point
+
+    @classmethod
+    def fromRootTipParams(cls, numBlades, pitchRootTip, radiusRootTip, chordRootTip,
+                          height_b2p, propType):
+        getPitchFromRadius = interp1d(radiusRootTip, pitchRootTip)
+        getChordFromRadius = interp1d(radiusRootTip, chordRootTip)
+        return cls(numBlades, radiusRootTip, getPitchFromRadius, getChordFromRadius,
+                   height_b2p, propType)
 
 
 class BatteryParameters:
@@ -187,8 +196,8 @@ def defaultShaftPropParams():
     radiusRootTip = (0, 0.0146)
     height_b2p = -1.55 / 1000  # Piccolissimo_V11, positive is UP
     propType = PropellerType.SHAFT
-    return PropellerParameters(numBlades, pitchRootTip, radiusRootTip, chordRootTip,
-                               height_b2p, propType)
+    return PropellerParameters.fromRootTipParams(numBlades, pitchRootTip, radiusRootTip,
+                                                 chordRootTip, height_b2p, propType)
 
 
 def defaultBodyPropParams():
@@ -200,8 +209,8 @@ def defaultBodyPropParams():
     radiusRootTip = (0, 19.16e-3)
     height_b2p = 2.56 / 1000  # Piccolissimo_V11, positive is UP
     propType = PropellerType.BODY
-    return PropellerParameters(numBlades, pitchRootTip, radiusRootTip, chordRootTip,
-                               height_b2p, propType)
+    return PropellerParameters.fromRootTipParams(numBlades, pitchRootTip, radiusRootTip,
+                                                 chordRootTip, height_b2p, propType)
 
 
 def defaultBatteryParams():
@@ -242,7 +251,9 @@ def defaultShrimpParams():
     batteryParams = defaultBatteryParams()
 
     propDiscRadius = shaftPropParams.radiusRootTip[1]
-    propDiscThickness = max(shaftPropParams.chordRootTip) * np.cos(max(shaftPropParams.pitchRootTip))
+    c = shaftPropParams.getChordFromRadius(propDiscRadius)
+    p = shaftPropParams.getPitchFromRadius(propDiscRadius)
+    propDiscThickness = c * np.cos(p)
     bodyWidth = 0.005
     bodyHeight = 0.003
     vizParams = ShrimpVizParameters(bodyWidth, bodyHeight, propDiscRadius, propDiscThickness)

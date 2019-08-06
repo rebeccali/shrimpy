@@ -87,9 +87,9 @@ def getBladeForceMoment(propParams, shrimpParams, state, bladeIndex):
     (radiusRoot, radiusTip) = propParams.radiusRootTip
     width = (radiusTip - radiusRoot) / n
 
-    pitches = np.linspace(propParams.pitchRootTip[0], propParams.pitchRootTip[1], n)
     radii = np.linspace(radiusRoot, radiusTip, n)
-    chords = np.linspace(propParams.chordRootTip[0], propParams.chordRootTip[1], n)
+    pitches = propParams.getPitchFromRadius(radii)
+    chords = propParams.getChordFromRadius(radii)
 
     # Assign propeller specific characteristics
     if propParams.propType == PropellerType.SHAFT:

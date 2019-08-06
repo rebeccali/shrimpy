@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Blade Element Theory for Shrimp Project
+Process Propeller data for shrimp project
 Rebecca Li 2019
 """
 import argparse
@@ -13,6 +13,8 @@ from scipy.interpolate import interp1d
 from shrimpClasses import PropellerParameters
 
 def getParamsFromTaguchiArray(index, pitchRootDeg):
+    """ See COmplete Guide to Shrimp Wings google doc for an explanation
+    """
     aspectRatios = [4,4,4,4.5,4.5,4.5,5,5,5]
     cambers = [6,4,6,6,4,6,6,4,6]
     symmetric = [True, False, False, True, False, False,  True, False, False]
