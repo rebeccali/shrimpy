@@ -16,6 +16,9 @@ from runSim import testRunSim
 from shrimpVisualizer import testShrimpVisualizer
 from calculateThrustTorqueProp import testThrustTorqueProp
 
+#specifies the directory for storing gif images
+#folderDirec = 'C:/Users/Fangzhou/Documents/SHRIMP/screengrabs/'
+
 print('Beginning Shrimp Project Testing')
 testMathUtil()
 testAerodynamics()
