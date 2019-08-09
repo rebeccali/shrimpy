@@ -23,8 +23,8 @@ from shrimpClasses import PropellerType, zeroShrimpState, PropellerParameters, d
 chordTip = 6e-3  # m
 chordRoot = 9.7e-3  # m
 radiusTip = 16e-3  # m
-radiusRoot = 2e-3 # m
-rho = 1.225 # kg/m^3
+radiusRoot = 2e-3  # m
+rho = 1.225  # kg/m^3
 # chordTip = radiusTip * radiusTip / (chordRoot * aspectRatio)
 
 # Pre-initializing for speeeed
@@ -67,8 +67,8 @@ def getParamsFromTaguchiArray(taguchiIndex, pitchRootDeg):
     twistDegs = [20, 10, 0, 10, 0, 20, 20, 0, 10]
 
     # Particulars
-    aspectRatio = aspectRatios[taguchiIndex-1]
-    twistDeg = twistDegs[taguchiIndex-1]
+    aspectRatio = aspectRatios[taguchiIndex - 1]
+    twistDeg = twistDegs[taguchiIndex - 1]
 
     propType = PropellerType.SHAFT
     height_b2p = 0.00001
@@ -95,12 +95,12 @@ def main(args):
     df = cleanUpPropDataframe(dfUnclean)
 
     wingColIndex = df.columns[['Wing Version' in c for c in df.columns]]  # This is a pandas.index
-    thrustColIndex = df.columns[['Thrust' in c for c in df.columns]]  # This is a pandas.index
+    thrustGramsColIndex = df.columns[['Thrust' in c for c in df.columns]]  # This is a pandas.index
     voltageColIndex = df.columns[['Voltage - Arduino' in c for c in df.columns]]  # This is a pandas.index
     doubleFreqColIndex = df.columns[['Frequency - Osc' in c for c in df.columns]]  # This is a pandas.index
 
     assert not wingColIndex.empty, 'Cannot find "Wing Version" Column'
-    assert not thrustColIndex.empty, 'Cannot find "Thrust" Column'
+    assert not thrustGramsColIndex.empty, 'Cannot find "Thrust" Column'
     assert not voltageColIndex.empty, 'Cannot find "Voltage - Arduino" Column'
     assert not doubleFreqColIndex.empty, 'Cannot find "Frequency - Osc" Column'
 
@@ -113,14 +113,14 @@ def main(args):
         assert '_' in propName, 'Expected underscore in propeller name, instead got %s' % propName
         i = propName.index('_')
         pitchRootDeg = float(propName[i + 1:i + 3])
-        taguchiIndex = int(propName[i-1:i])
+        taguchiIndex = int(propName[i - 1:i])
         params = getParamsFromTaguchiArray(taguchiIndex, pitchRootDeg)
         pitchTipDeg = params.getPitchFromRadius(params.radiusRootTip[1]) * 180. / np.pi
         # Parse the table data
         voltage = [float(i) for i in prop[voltageColIndex].values]
-        thrust = [float(i) for i in prop[thrustColIndex].values]
-        freqHz = [float(i)*0.5 for i in prop[doubleFreqColIndex].values]
-
+        gramsToNewtons = 0.001 * 9.81
+        thrust = [float(i) * gramsToNewtons for i in prop[thrustGramsColIndex].values]
+        freqHz = [float(i) * 0.5 for i in prop[doubleFreqColIndex].values]
 
         # Compare to the analytical data
         freqHzSpan = np.arange(min(freqHz) - 5, max(freqHz) + 5, 0.1)
@@ -134,26 +134,26 @@ def main(args):
         # Plot the interpolation
         vs = np.arange(min(voltage) - 0.3, max(voltage) + 0.3, 0.1)
         ts = getThrustFromVoltage(vs)
-        fig, (ax1, ax2, ax3) = plt.subplots(3)
+        fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(12, 8))
         figs.append(fig)
-        ax1.scatter(voltage, thrust)
-        ax1.plot(vs, ts)
+        ax1.scatter(voltage, thrust, label='Data')
+        ax1.plot(vs, ts, label='Interpolation')
         ax1.set_xlabel('Voltage [V]')
         ax1.set_ylabel('Thrust [N]')
-        ax1.legend(['Data', 'Interpolation'])
+        ax1.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         titleText = '%s : (root, tip) Pitch %2.1f, %2.1f [deg]' % (propName, pitchRootDeg, pitchTipDeg)
         ax1.set_title(titleText)
 
-        ax2.scatter(freqHz, thrust)
-        ax2.plot(freqHzSpan, thrustAnalytical)
+        ax2.scatter(freqHz, thrust, label='Data')
+        ax2.plot(freqHzSpan, thrustAnalytical, 'r-', label='Flat Plate Model')
         ax2.set_xlabel('Frequency [Hz]')
         ax2.set_ylabel('Thrust [N]')
-        ax2.legend(['Data', 'Flat plate model'])
+        ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
-        ax3.plot(freqHzSpan, dragAnalytical)
+        ax3.plot(freqHzSpan, dragAnalytical, 'r-', label='Flat Plate Model')
         ax3.set_xlabel('Frequency [Hz]')
         ax3.set_ylabel('Drag Moment [Nm]')
-        ax3.legend(['Flat plate model'])
+        ax3.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
     plt.show()
     # safe file
