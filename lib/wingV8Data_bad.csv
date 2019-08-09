@@ -1,0 +1,25 @@
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),W8_20 Thrust,W8_20 Torque
+,W8_20,2,,,,0,
+,,2.5,,,,0,
+,,3,3.02,649,1316,1.94,
+,,3.5,3.53,708,1435,2.21,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),W8_25 Thrust,W8_25 Torque
+,W8_25,2,,,,0,
+,,2.5,,,,0,
+,,3,2.99,858,984,2.21,
+,,3.5,3.51,875,1064,2.56,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),W8_30 Thrust,W8_30 Torque
+,W8_30,2,,,,0,
+,,2.5,,,,0,
+,,3,2.95,565,931,2.5,
+,,3.5,3.53,644,1000,2.95,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),W8_35 Thrust,W8_35 Torque
+,W8_35,2,,,,0,
+,,2.5,,,,0,
+,,3,3,372,732,3.01,
+,,3.5,3.51,395,781,3.25,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),W8_40 Thrust,W8_40 Torque
+,W8_40,2,,,,0,
+,,2.5,,,,0,
+,,3,2.98,364,694,2.45,
+,,3.5,3.5,377,757,2.8,

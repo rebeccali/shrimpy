@@ -1,0 +1,30 @@
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),W6_0 Thrust,W6_0 Torque,Notes
+,W6_0,2,2.06,260,716,1.2,,
+,,2.5,2.48,406,806,1.93,,
+,,3,2.99,450,900,2.53,,
+,,3.5,3.49,494,970,3.05,,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),W6_5 Thrust,W6_5 Torque,Notes
+,W6_5,2,2.05,428,830,0.97,,
+,,2.5,2.53,587,961,1.35,,
+,,3,3.01,764,1075,1.74,,
+,,3.5,3.5,581,1156,2.01,,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),W6_10 Thrust,W6_10 Torque,Notes
+,W6_10,2,2.03,455,888,0.17,,
+,,2.5,2.51,914,1017,0.33,,
+,,3,3.07,1.047,1190,0.64,,
+,,3.5,3.49,1216,1274,0.45,,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),W6_15 Thrust,W6_15 Torque,Notes
+,W6_15,2,2.04,470,953,0.21,,
+,,2.5,2.53,812,1093,0.188,,
+,,3,3.05,756,1227,0.262,,
+,,3.5,2.49,895,1333,0.295,,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),W6_20 Thrust,W6_20 Torque,Notes
+,W6_20,2,1.99,482,820,0.91,,"Run motor in reverse (CW) past 2 V to gain these positive values, otherwise will be negative"
+,,2.5,2.52,485,970,0.04,,
+,,3,3.02,545,1093,0.05,,
+,,3.5,3.5,600,1158,0.06,,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),W6_25 Thrust,W6_25 Torque,Notes
+,W6_25,2,2.05,338,676,0.06,,"Run motor in reverse (CW) to gain these positive values, otherwise will be negative"
+,,2.5,2.52,458,763,0.08,,
+,,3,2.97,445,840,0.095,,
+,,3.5,3.5,479,920,0.11,,

@@ -1,0 +1,50 @@
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),Current - Multimeter (A),W5_0 Thrust,W5_0 Torque
+,W5_0,2,1.99,272,543,0.15,0,
+,,2.5,2.51,290,584,0.19,0,
+,,3,2.94,1034,1190,0.49,0.73,
+,,3.5,3.51,1019,1345,0.57,0.08,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),Current - Multimeter (A),W5_5 Thrust,W5_5 Torque
+,W5_5,2,2.04,480,963,0.34,0.63,
+,,2.5,2.51,633,1145,0.46,0.47,
+,,3,3,680,1274,0.54,0.64,
+,,3.5,3.49,749,1415,0.63,0.85,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),Current - Multimeter (A),W5_10 Thrust,W5_10 Torque
+,W5_10,2,2,166,870,0.32,1.95,
+,,2.5,2.49,262,1020,0.42,2.2,
+,,3,3.01,336,1124,0.51,2.7,
+,,3.5,3.51,257,1250,0.61,3.2,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),Current - Multimeter (A),W5_15 Thrust,W5_15 Torque
+,W5_15,2,2.01,254,660,0.38,2.4,
+,,2.5,2.47,374,797,0.47,3.3,
+,,3,3.03,180,905,0.58,3.6,
+,,3.5,3.53,137,980,0.68,4.4,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),Current - Multimeter (A),W5_20 Thrust,W5_20 Torque
+,W5_20,2,2,283,542,0.42,2.2,
+,,2.5,2.47,371,621,0.53,2.6,
+,,3,2.98,402,670,0.62,3.5,
+,,3.5,0,0,735,0.71,4.4,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),Current - Multimeter (A),W5_25 Thrust,W5_25 Torque
+,W5_25,2,2,234,444,0.42,2.07,
+,,2.5,2.49,412,540,0.51,2.4,
+,,3,3,402,563,0.64,2.9,
+,,3.5,3.48,365,600,0.75,3.2,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),Current - Multimeter (A),W5_30 Thrust,W5_30 Torque
+,W5_30,2,2.02,201,403,0.45,1.74,
+,,2.5,2.47,225,457,0.54,2.2,
+,,3,2.99,247,488,0.66,2.6,
+,,3.5,3.52,263,516,0.75,2.95,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),Current - Multimeter (A),W5_35 Thrust,W5_35 Torque
+,W5_35,2,2.03,180,360,0.48,1.7,
+,,2.5,2.49,197,378,0.58,1.76,
+,,3,2.98,238,420,0.68,1.92,
+,,3.5,3.49,227,440,0.76,2.21,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),Current - Multimeter (A),W5_40 Thrust,W5_40 Torque
+,W5_40,2,2.04,171,440,0.38,1.66,
+,,2.5,2.45,196,372,0.58,1.54,
+,,3,2.97,236,395,0.68,1.95,
+,,3.5,3.5,265,429,0.77,2.1,
+,Wing Version,Voltage - Power Supply (V),Voltage - Arduino Read (V),Frequency - Arduino (Hz),Frequency - Oscilisope (Hz/2),Current - Multimeter (A),W5_45 Thrust,W5_45 Torque
+,W5_45,2,2.03,162,322,0.49,1.1,
+,,2.5,2.55,174,350,0.6,1.42,
+,,3,2.97,193,367,0.68,1.43,
+,,3.5,3.49,210,395,0.77,1.72,
