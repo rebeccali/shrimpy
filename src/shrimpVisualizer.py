@@ -18,8 +18,8 @@ from mathUtil import addYaw, eulerExtXYZfromEulerShrimp
 from shrimpClasses import defaultShrimpParams
 
 from PIL import Image
-from PIL import ImageGrab
-
+#from PIL import ImageGrab
+import pyscreenshot as ImageGrab
 import os
 
 
@@ -121,8 +121,8 @@ def drawShrimpBody(shrimpParams, r_w2b_w, euler_w2b):
 #Uses Pillow PIL to take screengrabs
 #imageIndex parameter used to index image as the animation loop progresses 
 def grabImage(imageIndex, directory):
-  im = ImageGrab.grab((0,100,1000,1000))
-  im.save(directory +"screenGrab#" + str(int(imageIndex)) + '.jpg','JPEG') 
+  im = ImageGrab.grab(bbox = (0,100,1000,1000))
+  im.save(directory +"screenGrab#" + str(int(imageIndex)) + '.jpg') 
   # image save directory specified in the above format. Saves as a JPEG file 
 
 def loadGeneratedScreenShots(directory):
@@ -130,7 +130,7 @@ def loadGeneratedScreenShots(directory):
   im = [] # create empty list
   filesInJPGFormat = [e for e in os.listdir(directory) if e.endswith('.jpg') == True]
   imageCount = len(filesInJPGFormat) # finds out how many images are in the folder 
-  print(imageCount)
+  #print(imageCount)
   for x in range(imageCount):
     im.append(Image.open(directory + "screenGrab#" +str(x)+ ".jpg"))
   #builds list
