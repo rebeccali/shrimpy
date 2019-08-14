@@ -39,7 +39,8 @@ def getElementForceMoment(params, state):
                                                                 yawDot_b2e)
 
     alpha = getAngleOfAttack(gamma, params.pitch)
-    (lift, drag) = getLiftDragElement(params.width, params.chord, rho, relativeWind_e, alpha)
+    (lift, drag) = getLiftDragElement(params.width, params.chord, rho, relativeWind_e, alpha, params.clFudgeFactor,
+                                      params.cdFudgeFactor)
 
     # Forces in the propeller frame
     normalForce_e = lift * np.cos(gamma) + drag * np.sin(gamma)
@@ -52,7 +53,7 @@ def getElementForceMoment(params, state):
     forces_b = rot_e2b.dot(forces_e)
     moments_b = np.cross(r_b2e_b, forces_b)
 
-    return(forces_b, moments_b)
+    return forces_b, moments_b
 
 
 def testBladeElement(radius, chord, pitch, width):
@@ -63,13 +64,15 @@ def testBladeElement(radius, chord, pitch, width):
 
     inflowVel = 1
     yawDot_b2e = rpm2RadiansPerSecond(500)
+    clFudgeFactor = 0.
+    cdFudgeFactor = 0.
     # Set up this particular propeller element
     bladeParams = BladeElementParameters(rho, pitch, width, radius, chord, bladeIndex,
-                                         numBlades, height_b2e, inflowVel, yawDot_b2e)
+                                         numBlades, height_b2e, inflowVel, yawDot_b2e, clFudgeFactor, cdFudgeFactor)
 
     state = dummyShrimpState()
     (forces_b, moments_b) = getElementForceMoment(bladeParams, state)
-    return (forces_b, moments_b)
+    return forces_b, moments_b
 
 
 def getBladeForceMoment(propParams, shrimpParams, state, bladeIndex):
@@ -105,7 +108,7 @@ def getBladeForceMoment(propParams, shrimpParams, state, bladeIndex):
         elementParams = BladeElementParameters(shrimpParams.rho, pitch, width, radius,
                                                chord, bladeIndex, propParams.numBlades,
                                                propParams.height_b2p, inflowVel,
-                                               yawDot_b2p)
+                                               yawDot_b2p, propParams.clFudgeFactor, propParams.cdFudgeFactor)
         return getElementForceMoment(elementParams, state)
 
     forceMomentTuples_b = [getThisElemForceMoment(p, r, c)

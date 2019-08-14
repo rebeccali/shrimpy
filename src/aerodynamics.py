@@ -177,7 +177,7 @@ def cmFlatPlate(alpha):
     return 0.0
 
 
-def getLiftDragElement(elementWidth, chord, rho, relWind_e, alpha):
+def getLiftDragElement(elementWidth, chord, rho, relWind_e, alpha, clFudgeFactor, cdFudgeFactor):
     """ Returns magnitude of lift and drag
     Arguments:
     elementWidth: the width of the blade section
@@ -195,9 +195,9 @@ def getLiftDragElement(elementWidth, chord, rho, relWind_e, alpha):
     # coeffLift = cl2412LowRe(alpha)
     # coeffDrag = cd2412LowRe(alpha)
     quantity = 0.5 * speed * speed * chord * elementWidth * rho
-    lift = quantity * coeffLift
-    drag = quantity * coeffDrag
-    return (lift, drag)
+    lift = quantity * (coeffLift + clFudgeFactor)
+    drag = quantity * (coeffDrag + cdFudgeFactor)
+    return lift, drag
 
 
 def testAerodynamics():
