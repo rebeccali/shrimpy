@@ -18,7 +18,7 @@ class PropellerType(Enum):
 
 class BladeElementParameters:
     def __init__(self, rho, pitch, width, radius, chord, index, numBlades,
-                 height_b2e, inflowVel, yawDot_b2e):
+                 height_b2e, inflowVel, yawDot_b2e, clFudgeFactor, cdFudgeFactor):
         self.rho = rho
         self.pitch = pitch
         self.width = width  # this is in the radial direction (strip model width)
@@ -29,6 +29,8 @@ class BladeElementParameters:
         self.height_b2e = height_b2e  # scalar [m]
         self.inflowVel = inflowVel  # Inflow velocity for this element. Scalar [m/s]
         self.yawDot_b2e = yawDot_b2e  # spin velocity of prop about body z axis for this element. Scalar [m/s]
+        self.clFudgeFactor = clFudgeFactor  # amount to fudge up Coeff Lift
+        self.cdFudgeFactor = cdFudgeFactor  # amount to fudge up Coeff Drag
 
 
 class PropellerParameters:
@@ -37,13 +39,15 @@ class PropellerParameters:
     """
 
     def __init__(self, numBlades, radiusRootTip, getPitchFromRadius, getChordFromRadius,
-                 height_b2p, propType):
+                 height_b2p, propType, clFudgeFactor=0., cdFudgeFactor=0.):
         self.numBlades = numBlades
         self.radiusRootTip = radiusRootTip  # Tuple, (root, tip)
         self.height_b2p = height_b2p  # Z-axis distance from cg to propeller, +z is up
         self.propType = propType  # PropellerType Enum
         self.getPitchFromRadius = getPitchFromRadius  # Function that takes radius and returns pitch at that point
         self.getChordFromRadius = getChordFromRadius  # Function that takes radius and returns pitch at that point
+        self.clFudgeFactor = clFudgeFactor
+        self.cdFudgeFactor = cdFudgeFactor
 
     @classmethod
     def fromRootTipParams(cls, numBlades, pitchRootTip, radiusRootTip, chordRootTip,

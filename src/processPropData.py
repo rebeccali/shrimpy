@@ -14,6 +14,7 @@ import numpy as np
 import os
 import pandas as pd
 from scipy.interpolate import interp1d
+from scipy.optimize import minimize_scalar
 
 from bladeDynamics import getPropForceMoment
 from mathUtil import rotPerSec2RadiansPerSecond
@@ -40,16 +41,6 @@ def getThrustDragProp(propParams, rotorFreqHz):
     (forces_b, moments_b) = getPropForceMoment(propParams, _shrimpParams, _shrimpState)
     thrust = forces_b[2]
     drag = moments_b[2]
-    # print('Thrust [N]: %f' % forces_b[2])
-    # print('Drag Moment [Nm]: %f' % moments_b[2])
-    # print('\n')
-    #
-    # print('Forces X: %f' % forces_b[0])
-    # print('Forces Y: %f' % forces_b[1])
-    # print('Forces Z: %f' % forces_b[2])
-    # print('Moments X: %f' % moments_b[0])
-    # print('Moments Y: %f' % moments_b[1])
-    # print('Moments Z: %f' % moments_b[2])
     return thrust, drag
 
 
@@ -83,7 +74,10 @@ def getParamsFromTaguchiArray(taguchiIndex, pitchRootDeg):
 
 
 def cleanUpPropDataframe(df):
+    """ Remove unused columns and rows """
+    # remove empty start column
     df.drop(columns='Unnamed: 0')
+    # remove repetitive headers
     dfClean = df[df['Wing Version'] != 'Wing Version']
     return dfClean
 
@@ -107,8 +101,13 @@ def main(args):
     n = 4
     propellerDataframes = [df[i * n:(i + 1) * n] for i in range((len(df) + n - 1) // n)]
     figs = []
+    clFudgeFactors = []
+    pitchRootDegs = []
+    pitchTipDegs = []
     for prop in propellerDataframes:
+
         propName = list(prop[wingColIndex].values.flatten())[0]  # First row name
+        print('Processing %s .' % propName)
         # Get angle of attack from propeller name
         assert '_' in propName, 'Expected underscore in propeller name, instead got %s' % propName
         i = propName.index('_')
@@ -121,9 +120,32 @@ def main(args):
         gramsToNewtons = 0.001 * 9.81
         thrust = [float(i) * gramsToNewtons for i in prop[thrustGramsColIndex].values]
         freqHz = [float(i) * 0.5 for i in prop[doubleFreqColIndex].values]
+        pitchRootDegs.append(pitchRootDeg)
+        pitchTipDegs.append(pitchTipDeg)
+        # Search for the CL fudge factor
+        clFudge = 0.
+        def fitFreqVsThrust(clFudgeFactor):
+            fudgedParams = params
+            fudgedParams.clFudgeFactor = clFudgeFactor
+            thrustDragFudgedTuple = [getThrustDragProp(fudgedParams, f) for f in freqHz]
+            thrustFudged = np.array([t for (t, d) in thrustDragFudgedTuple])
+            # return error compared to true thrust
+            thrustError = np.linalg.norm(np.array(thrust) - thrustFudged)
+            return thrustError
 
-        # Compare to the analytical data
-        freqHzSpan = np.arange(min(freqHz) - 5, max(freqHz) + 5, 0.1)
+        # Bound the CL search to be reasonable
+        result = minimize_scalar(fitFreqVsThrust, bounds=(-3., 3.), method='bounded')
+        if result.success:
+            clFudge = result.x
+            print('Fudge factor: %f' % result.x)
+        else:
+            raise Exception("Failed to optimize CL: %s" % result.message)
+
+        params.clFudgeFactor = clFudge
+        clFudgeFactors.append(clFudge)
+
+        # Compare to the analytical data including the fudge factor
+        freqHzSpan = np.linspace(min(freqHz) - 5, max(freqHz) + 5, 10)
         thrustDragTuple = [getThrustDragProp(params, f) for f in freqHzSpan]
         thrustAnalytical = [t for (t, d) in thrustDragTuple]
         dragAnalytical = [d for (t, d) in thrustDragTuple]
@@ -145,7 +167,7 @@ def main(args):
         ax1.set_title(titleText)
 
         ax2.scatter(freqHz, thrust, label='Data')
-        ax2.plot(freqHzSpan, thrustAnalytical, 'r-', label='Flat Plate Model')
+        ax2.plot(freqHzSpan, thrustAnalytical, 'r-', label=('Flat Plate Model, Cl Fudge factor %f' % clFudge))
         ax2.set_xlabel('Frequency [Hz]')
         ax2.set_ylabel('Thrust [N]')
         ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5))
@@ -155,13 +177,23 @@ def main(args):
         ax3.set_ylabel('Drag Moment [Nm]')
         ax3.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
-    plt.show()
-    # safe file
+    fig = plt.figure()
+    plt.scatter(pitchTipDegs, clFudgeFactors, label='Pitch Tip Deg', marker='o')
+    plt.scatter(pitchRootDegs, clFudgeFactors, label='Pitch Root Deg', marker='*')
+    plt.xlabel('Blade Pitch [Deg]')
+    plt.ylabel('Cl Fudge Factor')
+    plt.title('Cl fudge facter vs blade pitch')
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    figs.append(fig)
+
+    # plt.show()
+    # save file
     plotFilename = os.path.splitext(filename)[0] + '.pdf'
     pp = PdfPages(plotFilename)
     for f in figs:
-        pp.savefig(f)
+        pp.savefig(f, bbox_inches='tight')
     pp.close()
+    print('Saved plots to %s' % plotFilename)
 
 
 if __name__ == "__main__":
