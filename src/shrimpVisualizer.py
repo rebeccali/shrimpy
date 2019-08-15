@@ -17,6 +17,16 @@ import vpython as vp
 from mathUtil import addYaw, eulerExtXYZfromEulerShrimp
 from shrimpClasses import defaultShrimpParams
 
+import os
+import pyscreenshot as ImageGrab
+from PIL import Image
+
+# Specify directory path
+_thisFileDirectory = os.path.dirname(os.path.realpath(__file__))
+_gifFilePath = _thisFileDirectory + '/../lib/'
+_screenGrabPrefix = 'screenGrab#'
+_screenGrabSuffix = '.jpg'
+
 
 class SceneParameters:
     """ Parameters of the Vpython Shrimp Visualization
@@ -78,7 +88,7 @@ def rotateShrimpBody(shrimpBody, oldEuler_w2b, newEuler_w2b):
     """ Rotates the body about the world axis centered at the body
     """
     deltaEuler = oldEuler_w2b - newEuler_w2b
-    # The axes for the world are different than our
+    # The axes for the world are different than ours
     shrimpBody.rotate(angle=deltaEuler.x, axis=vp.vector(1, 0, 0))
     shrimpBody.rotate(angle=deltaEuler.y, axis=vp.vector(0, 1, 0))
     shrimpBody.rotate(angle=deltaEuler.z, axis=vp.vector(0, 0, 1))
@@ -102,10 +112,60 @@ def drawShrimpBody(shrimpParams, r_w2b_w, euler_w2b):
     propPos = propPosOffset + r_w2b_w
     shrimpProp = vp.cylinder(pos=propPos, axis=vp.vector(0, p.propDiscThickness, 0),
                              radius=p.propDiscRadius, color=vp.color.magenta)
-    shrimpBody = vp.compound([shrimpStator, shrimpProp])
+    shrimpBody = vp.compound([shrimpStator, shrimpProp], make_trail=True)
 
     rotateShrimpBody(shrimpBody, vp.vector(0, 0, 0), euler_w2b)
     return shrimpBody
+
+
+def grabImage(imageIndex, directory):
+    """ Uses Pillow PIL to take screengrabs
+        Arguments:
+            imageIndex (int): parameter used to index image as the animation loop progresses
+            directory (String): Directory to save screengrabs in
+    """
+    im = ImageGrab.grab(bbox=(0, 100, 1000, 1000), backend='imagemagick')
+    im.save(directory + _screenGrabPrefix + str(int(imageIndex)) + _screenGrabSuffix)
+
+
+def loadGeneratedScreenShots(directory):
+    """ This method loads all the jpg screenshots taken during the animation loop and
+        throws it into a convenient python list
+        Arguments:
+            directory (String): Directory to save screengrabs in
+    """
+    im = []  # create empty list
+    filesInJPGFormat = [e for e in os.listdir(directory) if e.endswith(_screenGrabSuffix)]
+    imageCount = len(filesInJPGFormat)  # finds out how many images are in the folder
+    # print(imageCount)
+    for x in range(imageCount):
+        im.append(Image.open(directory + _screenGrabPrefix + str(x) + _screenGrabSuffix))
+    # builds list
+    return im  # returns the resulting list of jpg files to be used in the gif generation method
+
+
+def saveImageListAsGif(imageList, directory):
+    """ This method does the gif generation with pillow. Takes the list and load it as a gif.
+        Arguments:
+            imageList ([TODO]): List of images
+            directory (String): Directory to save the gif in
+    """
+    frameDuration = 50  # sets how long each frame is shown for [ms]
+    imageList[0].save(directory + "physicsSim.gif",
+                      save_all=True,
+                      append_images=imageList[1:],
+                      duration=frameDuration,
+                      loop=0)
+
+
+def deleteImages(directory):
+    """ Deletes jpgs after gif has been generated
+        Arguments:
+                directory (String): Directory to save the gif in
+    """
+    imageStash = [f for f in os.listdir(directory) if _screenGrabPrefix in f]
+    for img in imageStash:
+        os.remove(directory + img)
 
 
 def setupShrimpScene(vizParams, shrimpParams, r_w2b_w, euler_w2b, autoplay):
@@ -185,8 +245,7 @@ def drawShrimp(shrimpParams, timeStamps, odeStates, autoplay=False):
     positions = [shrimpBody.pos]
     # For each timestamp, we're going to draw the body
     print('Animating Shrimp...')
-    for (timeStamp, newOdeState) in zip(timeStampsTail, odeStatesTail):  # animation loop here
-
+    for (i, (timeStamp, newOdeState)) in enumerate(zip(timeStampsTail, odeStatesTail)):  # animation loop here
         # update body position and orientation
         oldEuler_w2b = updateShrimpBody(shrimpBody, oldEuler_w2b, newOdeState)
         # call update function, pass in the text object and position of shrimp
@@ -194,6 +253,7 @@ def drawShrimp(shrimpParams, timeStamps, odeStates, autoplay=False):
         scene.title = 'time: %f seconds' % timeStamp
         # sleep for appropriate amount of time
         positions.append(shrimpBody.pos)
+        grabImage(i, _gifFilePath)
         vp.sleep(dt)
     scene.title = 'Simulation complete. Time: %f seconds' % timeStamps[-1]
     print('Visualizer finished. You may close the program')
@@ -211,4 +271,6 @@ def testShrimpVisualizer():
     states = np.zeros((n, stateSize))
     states[:, 8] = deltaPos
     scene = drawShrimp(p, t, states, autoplay=True)
+    saveImageListAsGif(loadGeneratedScreenShots(_gifFilePath), _gifFilePath)
+    deleteImages(_gifFilePath)
     scene.delete()
