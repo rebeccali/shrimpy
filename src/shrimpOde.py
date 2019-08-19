@@ -16,6 +16,7 @@ _odeOutputs = {
     "thrustsProp": [],
     "forcesAero_w": [],
     "momentsAero_w": [],
+    "gravity_w": [],
 
 }
 
@@ -72,20 +73,21 @@ def flyerOde(odeState, t, p):
     pwm = shrimpController(p, s)
 
     # Calculate Aerodynamic Forces
-    (bodyForce_b, bodyMoment_b) = getPropForceMoment(p.bodyPropParams, p, s)
-    (shaftForce_b, shaftMoment_b) = getPropForceMoment(p.shaftPropParams, p, s)
-    bodyMoment_f = rot_b2f.dot(bodyMoment_b)
-    shaftMoment_f = rot_b2f.dot(shaftMoment_b)
-    forcesAero_f = bodyMoment_f + shaftMoment_f
-    forcesAero_f[2] = -forcesAero_f[2]
+    (bodyPropForce_b, bodyPropMoment_b) = getPropForceMoment(p.bodyPropParams, p, s)
+    (shaftPropForce_b, shaftPropMoment_b) = getPropForceMoment(p.shaftPropParams, p, s)
+    bodyPropMoment_f = rot_b2f.dot(bodyPropMoment_b)
+    shaftPropMoment_f = rot_b2f.dot(shaftPropMoment_b)
+    forcesAero_f = rot_b2f.dot(bodyPropForce_b + shaftPropForce_b)
+    momentsAero_f = bodyPropMoment_f + shaftPropMoment_f
     _odeOutputs["thrustsProp"].append(forcesAero_f[2])
     _odeOutputs["forcesAero_w"].append(rot_f2w.dot(forcesAero_f))
-    _odeOutputs["momentsAero_w"].append(rot_f2w.dot(bodyMoment_f + shaftMoment_f))
+    _odeOutputs["momentsAero_w"].append(rot_f2w.dot(momentsAero_f))
 
 
     # Calculate Gravity
     gravity_w = np.array([0, 0, -9.81])*totalMass
     gravity_f = rot_w2f.dot(gravity_w)
+    _odeOutputs["gravity_w"].append(gravity_w)
 
     # Motor equations
     K_t = p.motorParams.K_t
@@ -98,9 +100,9 @@ def flyerOde(odeState, t, p):
 
     # Rotational Aspects
     # omg_rDot - prop z-rotational acc in prop frame
-    angacc_b2p_f = np.linalg.inv(propInertia_f).dot((shaftMoment_f + motorMoment_f) * np.array([0, 0, 1]))
+    angacc_b2p_f = np.linalg.inv(propInertia_f).dot((shaftPropMoment_f + motorMoment_f) * np.array([0, 0, 1]))
     # omg_bDot - body z-rotational acc in flyer frame
-    angacc_f2b_f = np.linalg.inv(inertia_f).dot((bodyMoment_f - motorMoment_f) * np.array([0, 0, 1]))
+    angacc_f2b_f = np.linalg.inv(inertia_f).dot((bodyPropMoment_f - motorMoment_f) * np.array([0, 0, 1]))
     # MGyro1
     angvel_w2b_f = rot_b2f.dot(s.angvel_w2b_b)
     moment_gyro1_f = -np.cross(s.angvel_w2f_f, inertia_f.dot(angvel_w2b_f))
@@ -108,7 +110,7 @@ def flyerOde(odeState, t, p):
     angvel_f2p_f = rot_p2f.dot(np.array([0, 0, s.yawDot_f2b + s.yawDot_b2p]))
     angvel_w2p_f = s.angvel_w2f_f + angvel_f2p_f
     moment_gyro2_f = -np.cross(s.angvel_w2f_f, propInertia_f.dot(angvel_w2p_f))
-    allMoments_f = (bodyMoment_f + shaftMoment_f - motorMoment_f * np.array([1, 1, 0]) +
+    allMoments_f = (bodyPropMoment_f + shaftPropMoment_f - motorMoment_f * np.array([1, 1, 0]) +
                     moment_gyro1_f + moment_gyro2_f - inertia_f.dot(angacc_f2b_f) -
                     propInertia_f.dot(angacc_b2p_f))
 
