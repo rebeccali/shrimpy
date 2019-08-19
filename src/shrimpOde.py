@@ -11,7 +11,7 @@ from shrimpClasses import ShrimpState, defaultShrimpParams
 from mathUtil import angVel2EulerAngleVel, rotateTensor, rotmFromYaw
 
 # TODO:rebecca make this betterer
-odeOutputs = {
+_odeOutputs = {
     "times": [],
     "thrustsProp": [],
     "forcesAero_w": [],
@@ -45,7 +45,7 @@ def flyerOde(odeState, t, p):
         Returns the derivative of the ODE state vector.
         TODO: rename this function
     """
-    odeOutputs["times"].append(t)
+    _odeOutputs["times"].append(t)
 
     # Set up useful quantities
     s = ShrimpState.fromOdeState(odeState)  # ShrimpState
@@ -78,9 +78,9 @@ def flyerOde(odeState, t, p):
     shaftMoment_f = rot_b2f.dot(shaftMoment_b)
     forcesAero_f = bodyMoment_f + shaftMoment_f
     forcesAero_f[2] = -forcesAero_f[2]
-    odeOutputs["thrustsProp"].append(forcesAero_f[2])
-    odeOutputs["forcesAero_w"].append(rot_f2w.dot(forcesAero_f))
-    odeOutputs["momentsAero_w"].append(rot_f2w.dot(bodyMoment_f + shaftMoment_f))
+    _odeOutputs["thrustsProp"].append(forcesAero_f[2])
+    _odeOutputs["forcesAero_w"].append(rot_f2w.dot(forcesAero_f))
+    _odeOutputs["momentsAero_w"].append(rot_f2w.dot(bodyMoment_f + shaftMoment_f))
 
 
     # Calculate Gravity

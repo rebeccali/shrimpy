@@ -6,11 +6,12 @@ Rebecca Li 2019
 import numpy as np
 from scipy.integrate import odeint
 from timeit import default_timer as timer
+import matplotlib.pyplot as plt
 
 from mathUtil import rpm2RadiansPerSecond
-from plotShrimp import plotOdeStates
-from shrimpOde import flyerOde
-from shrimpClasses import defaultShrimpParams
+from plotShrimp import plotOdeStates, plotOdeOutputs
+from shrimpOde import flyerOde, _odeOutputs
+from shrimpClasses import w3ShrimpParams
 from shrimpVisualizer import drawShrimp
 
 
@@ -49,8 +50,10 @@ def runSimulation(tf=0.3, plot=False, viz=False, test=False):
     print('Time elapsed for simulation: %f' % (endTime - startTime))
     if plot:
         plotOdeStates(states, t, test)
+        plotOdeOutputs(_odeOutputs)
+        plt.show()
     if viz:
-        drawShrimp(parameters, t, states, autoplay=True)
+        drawShrimp(parameters, t, states, autoplay=False, gif=test)
     return parameters, states, t
 
 
@@ -61,4 +64,5 @@ def testRunSim():
 
 if __name__ == "__main__":
     # TODO: add args
-    runSimulation(tf=1.13, plot=True, viz=True)
+    runSimulation(tf=0.3, plot=True, viz=False)
+

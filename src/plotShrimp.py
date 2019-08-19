@@ -4,7 +4,7 @@ Plots for Shrimp Project
 Rebecca Li 2019
 """
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 def plot4(name, a, b, c, d, ts):
     """Plot 3 values a,b,c, and their associated times"""
@@ -111,6 +111,32 @@ def plotYaws(odeStates, times):
     d = (yawDot_b2p, 'yawDot_b2p  [rad/s]')
     name = "Yaw angular position and velocities"
     plot4(name, a, b, c, d, times)
+
+def plotOdeOutputs(outputs):
+    """ Plots the outputs dictionary
+    """
+    # this is hacky, TODO fix
+    keys = list(outputs.keys())
+    keys.pop(keys.index('times'))
+    times = outputs['times']
+    for k in keys:
+        val = np.array(outputs[k])
+        if len(np.shape(val)) == 1:
+            plt.figure()
+            plt.plot(times, val)
+            plt.xlabel('Time [s]')
+            plt.ylabel(k)
+        else:
+            numItemsToPlot = np.shape(val)[1]
+            fig, axs = plt.subplots(numItemsToPlot, 1)
+            for i, v in enumerate(val.T):
+                axs[i].plot(times, v)
+                axs[i].set_xlabel('Time [s]')
+                axs[i].set_ylabel('index %d' % i)
+            axs[0].set_title(k)
+
+
+
 
 
 def plotOdeStates(odeStates, times, test=False):
