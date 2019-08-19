@@ -10,6 +10,14 @@ from shrimpController import shrimpController
 from shrimpClasses import ShrimpState, defaultShrimpParams
 from mathUtil import angVel2EulerAngleVel, rotateTensor, rotmFromYaw
 
+# TODO:rebecca make this betterer
+odeOutputs = {
+    "times": [],
+    "thrustsProp": [],
+    "forcesAero_w": [],
+    "momentsAero_w": [],
+
+}
 
 def flyerOde(odeState, t, p):
     """ This assembles everything for the ode integration and returns dx/dt in the Flyer Frame
@@ -37,6 +45,8 @@ def flyerOde(odeState, t, p):
         Returns the derivative of the ODE state vector.
         TODO: rename this function
     """
+    odeOutputs["times"].append(t)
+
     # Set up useful quantities
     s = ShrimpState.fromOdeState(odeState)  # ShrimpState
     totalMass = p.bodyMass + p.propMass
@@ -67,9 +77,14 @@ def flyerOde(odeState, t, p):
     bodyMoment_f = rot_b2f.dot(bodyMoment_b)
     shaftMoment_f = rot_b2f.dot(shaftMoment_b)
     forcesAero_f = bodyMoment_f + shaftMoment_f
+    forcesAero_f[2] = -forcesAero_f[2]
+    odeOutputs["thrustsProp"].append(forcesAero_f[2])
+    odeOutputs["forcesAero_w"].append(rot_f2w.dot(forcesAero_f))
+    odeOutputs["momentsAero_w"].append(rot_f2w.dot(bodyMoment_f + shaftMoment_f))
+
 
     # Calculate Gravity
-    gravity_w = np.array([0, 0, -9.81])
+    gravity_w = np.array([0, 0, -9.81])*totalMass
     gravity_f = rot_w2f.dot(gravity_w)
 
     # Motor equations
@@ -104,7 +119,7 @@ def flyerOde(odeState, t, p):
 
     # Newton's equations
     acc_w2f_f = (1 / totalMass) * \
-                (forcesAero_f + totalMass * gravity_f -
+                (forcesAero_f + gravity_f -
                  totalMass * np.cross(s.angvel_w2f_f, vel_w2f_f))
     acc_w2f_w = rot_f2w.dot(acc_w2f_f)
     acc_f2b_w = np.zeros(3)  # flyer and body occupy the same point bruh
