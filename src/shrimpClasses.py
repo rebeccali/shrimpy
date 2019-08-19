@@ -189,6 +189,26 @@ class ShrimpState:
                    euler_w2f, angvel_w2f_f, angvel_f2b_f)
 
 
+def w3ShaftPropParams():
+    """ Parameters for W3 Propeller
+    """
+    chordTip = 6e-3  # m
+    chordRoot = 9.7e-3  # m
+    radiusTip = 16e-3  # m
+    radiusRoot = 2e-3  # m
+    rho = 1.225  # kg/m^3
+    numBlades = 2
+    pitchRootTip = (20.*np.pi/180.,20.*np.pi/180.)
+    height_b2p = 10.55 / 1000  # Piccolissimo_V11, positive is UP
+    chordRootTip = (chordRoot, chordTip)
+    radiusRootTip = (radiusRoot, radiusTip)
+    propType = PropellerType.SHAFT
+    clFudge = -0.34  # from data
+    p = PropellerParameters.fromRootTipParams(numBlades, pitchRootTip, radiusRootTip,
+                                               chordRootTip, height_b2p, propType)
+    p.clFudgeFactor = clFudge
+    return p
+
 def defaultShaftPropParams():
     """ Parameters for Cheerson
         Data from propeller_cheerson_cx10.m
@@ -232,6 +252,11 @@ def defaultMotorParams():
     K_t = 1 / (20500 * 2 * np.pi / 60)  # Nm/A
     return MotorParameters(K_t, resistance)
 
+def w3ShrimpParams():
+    """ Shrimp Params with W3"""
+    p = defaultShrimpParams()
+    p.shaftPropParams = w3ShaftPropParams()
+    return p
 
 def defaultShrimpParams():
     """ Piccolissimo V11 essentially"""
