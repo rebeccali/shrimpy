@@ -54,7 +54,7 @@ def odeStateToOrientationVecs(odeState):
     """
     r_w2b_w = odeState[0:3]
     # In the VPython frame, rotation around x-axis
-    rot_w2v = np.array([[1, 0, 0], [0, 0, -1], [0, -1, 0]])
+    rot_w2v = np.array([[1, 0, 0], [0, 0, 1], [0, -1, 0]])
     r_w2b_v = rot_w2v.dot(r_w2b_w)
     euler_w2f = odeState[6:9]
     yaw_f2b = odeState[14]
@@ -74,6 +74,15 @@ def defaultSceneParameters():
     canvasWidth = 600
     return SceneParameters(groundWidth, groundLength, groundHeight, canvasHeight, canvasWidth)
 
+def drawWorldAxes(axesLength):
+    """ Draws world axes.  Returns axes.
+        Arguments:
+            axesLength (scalar): size of axes arrow
+    """
+    xpointer = vp.arrow(pos=vp.vector(0, 0, 0), axis=vp.vector(axesLength, 0, 0), color=vp.color.green) # to the right
+    ypointer = vp.arrow(pos=vp.vector(0, 0, 0), axis=vp.vector(0, axesLength, 0), color=vp.color.red) # (up)
+    zpointer = vp.arrow(pos=vp.vector(0, 0, 0), axis=vp.vector(0, 0, axesLength), color=vp.color.blue) # out of the page
+    return (xpointer, ypointer, zpointer)
 
 def drawGround(p):
     """ Generates default ground
@@ -179,7 +188,8 @@ def setupShrimpScene(vizParams, shrimpParams, r_w2b_w, euler_w2b, autoplay):
     scene = vp.canvas(width=vizParams.canvasWidth, height=vizParams.canvasHeight,
                       title='Shrimp World. Press any key to begin')
     # scene.autoscale = False
-    drawGround(vizParams)  # draws ground
+    # drawGround(vizParams)  # draws ground
+    drawWorldAxes(shrimpParams.vizParams.propDiscRadius)
     shrimpBody = drawShrimpBody(shrimpParams, r_w2b_w, euler_w2b)
     sceneText = initializeShrimpText(shrimpBody.pos)
     if not autoplay:
@@ -221,7 +231,7 @@ def updateShrimpBody(shrimpBody, oldEuler_w2b, newOdeState):
     return (newEuler_w2b)
 
 
-def drawShrimp(shrimpParams, timeStamps, odeStates, autoplay=False):
+def drawShrimp(shrimpParams, timeStamps, odeStates, autoplay=False, gif=False):
     """ Draws and animates 3d shrimp from odestates and timestamp
         Arguments:
             shrimpParams (ShrimpParameters)
@@ -253,9 +263,14 @@ def drawShrimp(shrimpParams, timeStamps, odeStates, autoplay=False):
         scene.title = 'time: %f seconds' % timeStamp
         # sleep for appropriate amount of time
         positions.append(shrimpBody.pos)
-        grabImage(i, _gifFilePath)
+        if gif:
+            grabImage(i, _gifFilePath)
         vp.sleep(dt)
     scene.title = 'Simulation complete. Time: %f seconds' % timeStamps[-1]
+
+    if gif:
+        saveImageListAsGif(loadGeneratedScreenShots(_gifFilePath), _gifFilePath)
+        deleteImages(_gifFilePath)
     print('Visualizer finished. You may close the program')
     return scene
 
@@ -270,7 +285,5 @@ def testShrimpVisualizer():
     stateSize = 16
     states = np.zeros((n, stateSize))
     states[:, 8] = deltaPos
-    scene = drawShrimp(p, t, states, autoplay=True)
-    saveImageListAsGif(loadGeneratedScreenShots(_gifFilePath), _gifFilePath)
-    deleteImages(_gifFilePath)
+    scene = drawShrimp(p, t, states, autoplay=True, gif=True)
     scene.delete()
