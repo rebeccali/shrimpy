@@ -134,7 +134,7 @@ def plotOdeOutputs(outputs):
                 axs[i].set_xlabel('Time [s]')
                 axs[i].set_ylabel('index %d' % i)
             axs[0].set_title(k)
-
+    plt.tight_layout()
 
 
 
@@ -150,5 +150,6 @@ def plotOdeStates(odeStates, times, test=False):
     plotEuler(odeStates, times)
     plotAngVel(odeStates, times)
     plotYaws(odeStates, times)
+    plt.tight_layout()
    # if not test:
         #plt.show()
