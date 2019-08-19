@@ -118,9 +118,7 @@ def flyerOde(odeState, t, p):
     velEuler_w2f = angVel2EulerAngleVel(s.angvel_w2f_f, s.euler_w2f)
 
     # Newton's equations
-    acc_w2f_f = (1 / totalMass) * \
-                (forcesAero_f + gravity_f -
-                 totalMass * np.cross(s.angvel_w2f_f, vel_w2f_f))
+    acc_w2f_f = (1 / totalMass) * (forcesAero_f + gravity_f) - np.cross(s.angvel_w2f_f, vel_w2f_f)
     acc_w2f_w = rot_f2w.dot(acc_w2f_f)
     acc_f2b_w = np.zeros(3)  # flyer and body occupy the same point bruh
     acc_w2b_w = acc_w2f_w + acc_f2b_w

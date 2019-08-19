@@ -267,6 +267,7 @@ def defaultShrimpParams():
     Ixx = inertiaAdjustment * 383e-9
     Iyy = inertiaAdjustment * 439e-9
     Izz = inertiaAdjustment * 697e-9
+    Izz = 4*Iyy
 
     # Taken from propeller_cheerson_cx10.m Though this describes the rotor mass/inertia
     # as well

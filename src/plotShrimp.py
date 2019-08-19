@@ -150,5 +150,5 @@ def plotOdeStates(odeStates, times, test=False):
     plotEuler(odeStates, times)
     plotAngVel(odeStates, times)
     plotYaws(odeStates, times)
-    if not test:
-        plt.show()
+   # if not test:
+        #plt.show()

@@ -17,9 +17,9 @@ from shrimpVisualizer import drawShrimp
 
 def initialOdeState():
     """Set up nice state for us """
-    r_w2b_w = np.array([0, 0, 1])
+    r_w2b_w = np.array([0, 0, 0])
     vel_w2b_w = np.array([0, 0, 0])
-    euler_w2f = np.array([0.01, 0.01, 0]) * np.pi / 180.
+    euler_w2f = np.array([0.1, 0.01, 0]) * np.pi / 180.
     angvel_w2f_f = np.array([0, 0, 0])
     yaw_b2p = 0
     yaw_f2b = 0
@@ -40,7 +40,7 @@ def initialOdeState():
 def runSimulation(tf=0.3, plot=False, viz=False, test=False):
     """ Run a sim!"""
     y0 = initialOdeState()
-    parameters = defaultShrimpParams()
+    parameters = w3ShrimpParams()
     dt = 0.01
     t = np.arange(0, tf, dt)
     print('Simulating shrimp...')
@@ -59,7 +59,7 @@ def runSimulation(tf=0.3, plot=False, viz=False, test=False):
 
 def testRunSim():
     """Test stuff"""
-    runSimulation(tf=0.3, plot=True, test=True)
+    runSimulation(tf=0.3, plot=True, test=False)
 
 
 if __name__ == "__main__":
