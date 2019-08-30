@@ -3,8 +3,10 @@
 Plots for Shrimp Project
 Rebecca Li 2019
 """
+from mathUtil import yawIndex, rollIndex, pitchIndex
 import matplotlib.pyplot as plt
 import numpy as np
+
 
 def plot4(name, a, b, c, d, ts):
     """Plot 3 values a,b,c, and their associated times"""
@@ -74,9 +76,11 @@ def plotVelocities(odeStates, times):
 
 def plotEuler(odeStates, times):
     """Plots euler angles """
-    yaw = odeStates[:, 6]
-    roll = odeStates[:, 7]
-    pitch = odeStates[:, 8]
+    eulerAngles = odeStates[:, 6:9]
+
+    yaw = eulerAngles[:, yawIndex]
+    roll = eulerAngles[:, rollIndex]
+    pitch = eulerAngles[:, pitchIndex]
 
     a = (roll, 'roll [rad]')
     b = (pitch, 'pitch [rad]')
