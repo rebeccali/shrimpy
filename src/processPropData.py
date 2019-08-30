@@ -18,7 +18,8 @@ from scipy.optimize import minimize_scalar
 
 from bladeDynamics import getPropForceMoment
 from mathUtil import rotPerSec2RadiansPerSecond
-from shrimpClasses import PropellerType, zeroShrimpState, PropellerParameters, defaultShrimpParams
+from shrimpClasses import PropellerType, PropellerParameters
+from shrimpConfigs import defaultShrimpParams, zeroShrimpState
 
 # Edit these parameters for the particular wing you are processing!!
 chordTip = 6e-3  # m

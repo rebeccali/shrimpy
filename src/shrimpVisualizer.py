@@ -11,15 +11,15 @@ Y is towards the top of the screen
 Z is out of the screen
 """
 
+import os
 import numpy as np
+from PIL import Image
+import pyscreenshot as ImageGrab
 import vpython as vp
 
 from mathUtil import addYaw, eulerExtXYZfromEulerShrimp
 from shrimpClasses import defaultShrimpParams
 
-import os
-import pyscreenshot as ImageGrab
-from PIL import Image
 
 # Specify directory path
 _thisFileDirectory = os.path.dirname(os.path.realpath(__file__))

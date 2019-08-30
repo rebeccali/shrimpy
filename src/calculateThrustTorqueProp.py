@@ -6,7 +6,8 @@ Rebecca Li 2019
 """
 from bladeDynamics import getPropForceMoment
 from mathUtil import rotPerSec2RadiansPerSecond
-from shrimpClasses import PropellerType, zeroShrimpState, PropellerParameters, defaultShrimpParams
+from shrimpClasses import PropellerType, PropellerParameters, defaultShrimpParams
+from shrimpConfigs import zeroShrimpState
 
 
 def testThrustTorqueProp(propParams=None):

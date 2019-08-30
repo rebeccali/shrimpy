@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from mathUtil import rpm2RadiansPerSecond
 from plotShrimp import plotOdeStates, plotOdeOutputs
 from shrimpOde import flyerOde, _odeOutputs
-from shrimpClasses import w3ShrimpParams
+from shrimpConfigs import w3ShrimpParams
 from shrimpVisualizer import drawShrimp
 
 

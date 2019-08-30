@@ -6,8 +6,8 @@ Rebecca Li 2019
 import numpy as np
 
 from aerodynamics import getAngleOfAttack, getLiftDragElement, getRelativeWind
-from shrimpClasses import BladeElementParameters, dummyShrimpState, PropellerType
-from shrimpClasses import defaultBodyPropParams, defaultShrimpParams, zeroShrimpState  # TODO make this import prettier
+from shrimpClasses import BladeElementParameters, PropellerType
+from shrimpClasses import defaultBodyPropParams, defaultShrimpParams, dummyShrimpState  # TODO make this import prettier
 from mathUtil import rpm2RadiansPerSecond, rotPerSec2RadiansPerSecond
 
 
