@@ -60,6 +60,13 @@ def plotPositions(odeStates, times):
     name = "Position"
     plot3(name, a, b, c, times)
 
+    plt.figure()
+    plt.plot(x_b2w_w, y_b2w_w)
+    plt.title('Position XY')
+    plt.xlabel('X position [m]')
+    plt.xlabel('Y position [m]')
+
+
 
 def plotVelocities(odeStates, times):
     """Plots Velocities"""
