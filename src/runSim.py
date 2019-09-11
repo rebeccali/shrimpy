@@ -9,9 +9,9 @@ from timeit import default_timer as timer
 import matplotlib.pyplot as plt
 
 from mathUtil import rpm2RadiansPerSecond
-from plotShrimp import plotOdeStates, plotOdeOutputs
+from plotShrimp import plotOdeStates, plotOdeOutputs, plotForces, plotMoments
 from shrimpOde import flyerOde, _odeOutputs
-from shrimpConfigs import w3ShrimpParams
+from shrimpConfigs import w3ShrimpParams, defaultShrimpParams
 from shrimpVisualizer import drawShrimp
 
 
@@ -40,7 +40,7 @@ def initialOdeState():
 def runSimulation(tf=0.3, plot=False, viz=False, test=False):
     """ Run a sim!"""
     y0 = initialOdeState()
-    parameters = w3ShrimpParams()
+    parameters = defaultShrimpParams()
     dt = 0.01
     t = np.arange(0, tf, dt)
     print('Simulating shrimp...')
@@ -50,7 +50,9 @@ def runSimulation(tf=0.3, plot=False, viz=False, test=False):
     print('Time elapsed for simulation: %f' % (endTime - startTime))
     if plot:
         plotOdeStates(states, t, test)
-        plotOdeOutputs(_odeOutputs)
+#        plotOdeOutputs(_odeOutputs)
+        plotForces(_odeOutputs)
+        plotMoments(_odeOutputs)
         plt.show()
     if viz:
         drawShrimp(parameters, t, states, autoplay=False, gif=test)
