@@ -6,19 +6,20 @@ Rebecca Li 2019
 import numpy as np
 from scipy.integrate import odeint
 from timeit import default_timer as timer
+import matplotlib.pyplot as plt
 
 from mathUtil import rpm2RadiansPerSecond
-from plotShrimp import plotOdeStates
-from shrimpOde import flyerOde
-from shrimpClasses import defaultShrimpParams
+from plotShrimp import plotOdeStates, plotOdeOutputs, plotForces, plotMoments
+from shrimpOde import flyerOde, _odeOutputs
+from shrimpConfigs import w3ShrimpParams, defaultShrimpParams
 from shrimpVisualizer import drawShrimp
 
 
 def initialOdeState():
     """Set up nice state for us """
-    r_w2b_w = np.array([0, 0, 1])
+    r_w2b_w = np.array([0, 0, 0])
     vel_w2b_w = np.array([0, 0, 0])
-    euler_w2f = np.array([0.01, 0.01, 0]) * np.pi / 180.
+    euler_w2f = np.array([0.1, 0.01, 0]) * np.pi / 180.
     angvel_w2f_f = np.array([0, 0, 0])
     yaw_b2p = 0
     yaw_f2b = 0
@@ -49,16 +50,21 @@ def runSimulation(tf=0.3, plot=False, viz=False, test=False):
     print('Time elapsed for simulation: %f' % (endTime - startTime))
     if plot:
         plotOdeStates(states, t, test)
+#        plotOdeOutputs(_odeOutputs)
+        plotForces(_odeOutputs)
+        plotMoments(_odeOutputs)
+        plt.show()
     if viz:
-        drawShrimp(parameters, t, states, autoplay=True)
+        drawShrimp(parameters, t, states, autoplay=False, gif=test)
     return parameters, states, t
 
 
 def testRunSim():
     """Test stuff"""
-    runSimulation(tf=0.3, plot=True, test=True)
+    runSimulation(tf=0.3, plot=True, test=False)
 
 
 if __name__ == "__main__":
     # TODO: add args
-    runSimulation(tf=1.13, plot=True, viz=True)
+    runSimulation(tf=0.3, plot=True, viz=False)
+

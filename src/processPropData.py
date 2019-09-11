@@ -18,7 +18,8 @@ from scipy.optimize import minimize_scalar
 
 from bladeDynamics import getPropForceMoment
 from mathUtil import rotPerSec2RadiansPerSecond
-from shrimpClasses import PropellerType, zeroShrimpState, PropellerParameters, defaultShrimpParams
+from shrimpClasses import PropellerType, PropellerParameters
+from shrimpConfigs import defaultShrimpParams, zeroShrimpState
 
 # Edit these parameters for the particular wing you are processing!!
 chordTip = 6e-3  # m
@@ -26,6 +27,7 @@ chordRoot = 9.7e-3  # m
 radiusTip = 16e-3  # m
 radiusRoot = 2e-3  # m
 rho = 1.225  # kg/m^3
+numBlades = 2
 # chordTip = radiusTip * radiusTip / (chordRoot * aspectRatio)
 
 # Pre-initializing for speeeed
@@ -63,7 +65,6 @@ def getParamsFromTaguchiArray(taguchiIndex, pitchRootDeg):
 
     propType = PropellerType.SHAFT
     height_b2p = 0.00001
-    numBlades = 2
     radiusRootTip = (radiusRoot, radiusTip)
 
     pitchRootTip = np.array([pitchRootDeg, twistDeg + pitchRootDeg]) * np.pi / 180.

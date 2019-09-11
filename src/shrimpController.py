@@ -15,6 +15,7 @@ def shrimpController(p, s):
     pwmBias = 0.5
     Kp = 0.1
     pwmCommand = np.clip(pwmBias - error_z * Kp, 0, 1)
+    pwmCommand = 1.
     return pwmCommand
 
 

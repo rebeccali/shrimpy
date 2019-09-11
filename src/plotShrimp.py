@@ -3,7 +3,9 @@
 Plots for Shrimp Project
 Rebecca Li 2019
 """
+from mathUtil import yawIndex, rollIndex, pitchIndex
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def plot4(name, a, b, c, d, ts):
@@ -58,6 +60,12 @@ def plotPositions(odeStates, times):
     name = "Position"
     plot3(name, a, b, c, times)
 
+    plt.figure()
+    plt.plot(x_b2w_w, y_b2w_w)
+    plt.title('Position XY')
+    plt.xlabel('X position [m]')
+    plt.xlabel('Y position [m]')
+
 
 def plotVelocities(odeStates, times):
     """Plots Velocities"""
@@ -74,26 +82,28 @@ def plotVelocities(odeStates, times):
 
 def plotEuler(odeStates, times):
     """Plots euler angles """
-    yaw = odeStates[:, 6]
-    roll = odeStates[:, 7]
-    pitch = odeStates[:, 8]
+    eulerAngles = odeStates[:, 6:9]
 
-    a = (roll, 'roll [rad]')
-    b = (pitch, 'pitch [rad]')
-    c = (yaw, 'yaw [rad]')
+    yawDeg = np.array(eulerAngles[:, yawIndex]) * 180. / np.pi
+    rollDeg = np.array(eulerAngles[:, rollIndex]) * 180. / np.pi
+    pitchDeg = np.array(eulerAngles[:, pitchIndex]) * 180. / np.pi
+
+    a = (rollDeg, 'roll [deg]')
+    b = (pitchDeg, 'pitch [deg]')
+    c = (yawDeg, 'yaw [deg]')
     name = "ZYX Euler Angles"
     plot3(name, a, b, c, times)
 
 
 def plotAngVel(odeStates, times):
     """Plots angular velocities """
-    p = odeStates[:, 9]
-    q = odeStates[:, 10]
-    r = odeStates[:, 11]
+    pDeg = np.array(odeStates[:, 9]) * 180. / np.pi
+    qDeg = np.array(odeStates[:, 10]) * 180. / np.pi
+    rDeg = np.array(odeStates[:, 11]) * 180. / np.pi
 
-    a = (p, 'p [rad/s]')
-    b = (q, 'q [rad/s]')
-    c = (r, 'r [rad/s]')
+    a = (pDeg, 'p [deg/s]')
+    b = (qDeg, 'q [deg/s]')
+    c = (rDeg, 'r [deg/s]')
     name = "Body Angular Velocities"
     plot3(name, a, b, c, times)
 
@@ -113,6 +123,58 @@ def plotYaws(odeStates, times):
     plot4(name, a, b, c, d, times)
 
 
+def plotXyzType(outputs, typeName):
+    """Plot all outputs that contain the xyz typeName, like forces"""
+    times = outputs['times']
+    keys = list(outputs.keys())
+    typeKeys = [k for k in keys if typeName in k]
+    axesNames = 'xyz'
+    fig, axs = plt.subplots(3, 1)
+    for (i, axisName) in enumerate(axesNames):
+        for k in typeKeys:
+            print('plotting %s' % k)
+            axs[i].plot(times, np.array(outputs[k])[:, i])
+        axs[i].set_xlabel('Time [s]')
+        axs[i].set_ylabel(axisName)
+        axs[i].legend(typeKeys)
+
+
+def plotForces(outputs):
+    """Plot all forces on a single plot"""
+    plotXyzType(outputs, 'forces')
+
+
+def plotMoments(outputs):
+    """Plot all moments on a single plot"""
+    plotXyzType(outputs, 'moments')
+
+
+def plotOdeOutputs(outputs):
+    """ Plots the outputs dictionary
+    """
+    # this is hacky, TODO fix
+    keys = list(outputs.keys())
+    keys.pop(keys.index('times'))
+    times = outputs['times']
+    for k in keys:
+        print('plotting %s' % k)
+        val = np.array(outputs[k])
+        if len(np.shape(val)) == 1:
+            plt.figure()
+            plt.plot(times, val)
+            plt.xlabel('Time [s]')
+            plt.ylabel(k)
+        else:
+            numItemsToPlot = np.shape(val)[1]
+            fig, axs = plt.subplots(numItemsToPlot, 1)
+            for i, v in enumerate(val.T):
+                axs[i].plot(times, v)
+                axs[i].set_xlabel('Time [s]')
+                axs[i].set_ylabel('index %d' % i)
+            axs[0].set_title(k)
+    plt.tight_layout()
+
+
 def plotOdeStates(odeStates, times, test=False):
     """ Plot all the things.
         Arguments:
@@ -124,5 +186,6 @@ def plotOdeStates(odeStates, times, test=False):
     plotEuler(odeStates, times)
     plotAngVel(odeStates, times)
     plotYaws(odeStates, times)
-    if not test:
-        plt.show()
+    plt.tight_layout()
+# if not test:
+# plt.show()

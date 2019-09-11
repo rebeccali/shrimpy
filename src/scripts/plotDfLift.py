@@ -2,7 +2,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from bladeDynamics import getPropForceMoment
-from shrimpClasses import ShrimpState, defaultShaftPropParams, defaultShrimpParams
+from shrimpClasses import ShrimpState, defaultShaftPropParams
+from shrimpConfigs import defaultShrimpParams
 
 
 def playWDiffLift():

@@ -8,6 +8,9 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 
 _eulerConvention = 'ZXY'
+yawIndex = 0
+pitchIndex = 1
+rollIndex = 2
 
 
 def rotm2Euler(x):
@@ -43,17 +46,15 @@ def rotmFromYaw(yaw_a2b):
     """ Returns rot_a2b rotation matrix about z-axis from a to b """
     return R.from_euler('z', -yaw_a2b).as_dcm()
 
-
 def getYaw(eulerAngle):
-    return eulerAngle[0]
-
+    return eulerAngle[yawIndex]
 
 def getPitch(eulerAngle):
-    return eulerAngle[1]
+    return eulerAngle[pitchIndex]
 
 
 def getRoll(eulerAngle):
-    return eulerAngle[2]
+    return eulerAngle[rollIndex]
 
 
 def eulerExtXYZfromEulerShrimp(x):
