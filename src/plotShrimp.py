@@ -48,6 +48,23 @@ def plot3(name, a, b, c, ts):
     plt.xlabel("Time [s]")
 
 
+def plot2(name, a, b, ts):
+    """Plot 2 values a,b and their associated times"""
+
+    def plotState(state, ylab):
+        """ Helper fun """
+        plt.plot(ts, state, "-")
+        plt.ylabel(ylab)
+
+    plt.figure()
+    ax = plt.subplot(211)
+    plotState(a[0], a[1])
+    plt.title(name)
+    plt.subplot(212, sharex=ax)
+    plotState(b[0], b[1])
+    plt.xlabel("Time [s]")
+
+
 def plotPositions(odeStates, times):
     """Plots Positions"""
     x_b2w_w = odeStates[:, 0]
@@ -91,7 +108,7 @@ def plotEuler(odeStates, times):
     a = (rollDeg, 'roll [deg]')
     b = (pitchDeg, 'pitch [deg]')
     c = (yawDeg, 'yaw [deg]')
-    name = "ZYX Euler Angles"
+    name = "ZYX Euler Angles in the flyer frame"
     plot3(name, a, b, c, times)
 
 
@@ -104,23 +121,21 @@ def plotAngVel(odeStates, times):
     a = (pDeg, 'p [deg/s]')
     b = (qDeg, 'q [deg/s]')
     c = (rDeg, 'r [deg/s]')
-    name = "Body Angular Velocities"
+    name = "Body Angular Velocities in the flyer frame"
     plot3(name, a, b, c, times)
 
 
 def plotYaws(odeStates, times):
     """Plots angular velocities """
-    yawDot_f2b = odeStates[:, 12]
-    yawDot_b2p = odeStates[:, 13]
-    yaw_f2b = odeStates[:, 14]
-    yaw_b2p = odeStates[:, 15]
+    yawDot_f2b = np.array(odeStates[:, 12])
+    yawDot_b2p = np.array(odeStates[:, 13])
+    yawDot_b2pRPM = yawDot_b2p * 0.1047
+    yawDot_f2bRPM = yawDot_f2b * 0.1047
 
-    a = (yaw_f2b, 'yaw_f2b  [rad/s]')
-    b = (yawDot_f2b, 'yawDot_f2b  [rad/s]')
-    c = (yaw_b2p, 'yaw_b2p  [rad/s]')
-    d = (yawDot_b2p, 'yawDot_b2p  [rad/s]')
-    name = "Yaw angular position and velocities"
-    plot4(name, a, b, c, d, times)
+    b = (yawDot_f2bRPM, 'yawDot_f2b  [rpm]')
+    d = (yawDot_b2pRPM, 'yawDot_b2p  [rpm]')
+    name = "Yaw angular velocities"
+    plot2(name, b, d, times)
 
 
 def plotXyzType(outputs, typeName):
