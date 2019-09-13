@@ -11,8 +11,29 @@ import matplotlib.pyplot as plt
 from mathUtil import rpm2RadiansPerSecond
 from plotShrimp import plotOdeStates, plotOdeOutputs, plotForces, plotMoments
 from shrimpOde import flyerOde, _odeOutputs
-from shrimpConfigs import w3ShrimpParams, defaultShrimpParams
+from shrimpConfigs import *
 from shrimpVisualizer import drawShrimp
+
+def odeStateStill():
+    """ Ode state where the body is in hover but translating sideways. """
+    r_w2b_w = np.array([0., 0., 0.])
+    vel_w2b_w = np.array([0.5, 0., 0.])
+    euler_w2f = np.array([0.0, 0.0, 0.]) * np.pi / 180.
+    angvel_w2f_f = np.array([0., 0., 0.])
+    yaw_b2p = 0.
+    yaw_f2b = 0.
+    yawDot_f2b = -40.
+    yawDot_b2p = 5000.
+    odeState = np.zeros(16)
+    odeState[0:3] = r_w2b_w
+    odeState[3:6] = vel_w2b_w
+    odeState[6:9] = euler_w2f
+    odeState[9:12] = angvel_w2f_f
+    odeState[12] = yawDot_f2b
+    odeState[13] = yawDot_b2p
+    odeState[14] = yaw_f2b
+    odeState[15] = yaw_b2p
+    return odeState
 
 
 def initialOdeState():
@@ -23,8 +44,8 @@ def initialOdeState():
     angvel_w2f_f = np.array([0, 0, 0])
     yaw_b2p = 0
     yaw_f2b = 0
-    yawDot_f2b = rpm2RadiansPerSecond(10)
-    yawDot_b2p = rpm2RadiansPerSecond(500)
+    yawDot_f2b = -22.
+    yawDot_b2p = 3000.
     odeState = np.zeros(16)
     odeState[0:3] = r_w2b_w
     odeState[3:6] = vel_w2b_w
@@ -39,9 +60,9 @@ def initialOdeState():
 
 def runSimulation(tf=0.3, plot=False, viz=False, test=False):
     """ Run a sim!"""
-    y0 = initialOdeState()
+    y0 = odeStateStill()
     parameters = defaultShrimpParams()
-    dt = 0.01
+    dt = 0.005
     t = np.arange(0, tf, dt)
     print('Simulating shrimp...')
     startTime = timer()
