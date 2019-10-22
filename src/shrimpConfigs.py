@@ -1,6 +1,6 @@
 import numpy as np
 
-from shrimpClasses import PropellerType, PropellerParameters, defaultShrimpParams,  ShrimpState
+from shrimpClasses import PropellerType, PropellerParameters, defaultShrimpParams, ShrimpState
 
 
 def w3ShaftPropParams():
@@ -12,7 +12,7 @@ def w3ShaftPropParams():
     radiusRoot = 2e-3  # m
     rho = 1.225  # kg/m^3
     numBlades = 2
-    pitchRootTip = (20.*np.pi/180.,20.*np.pi/180.)
+    pitchRootTip = (20. * np.pi / 180., 20. * np.pi / 180.)
     height_b2p = 10.55 / 1000  # Piccolissimo_V11, positive is UP
     chordRootTip = (chordRoot, chordTip)
     radiusRootTip = (radiusRoot, radiusTip)
@@ -20,9 +20,10 @@ def w3ShaftPropParams():
     clFudge = -0.34  # from data
     clFudge = 0.04
     p = PropellerParameters.fromRootTipParams(numBlades, pitchRootTip, radiusRootTip,
-                                               chordRootTip, height_b2p, propType)
+                                              chordRootTip, height_b2p, propType)
     p.clFudgeFactor = clFudge
     return p
+
 
 def w3ShrimpParams():
     """ Shrimp Params with W3"""
@@ -31,9 +32,12 @@ def w3ShrimpParams():
     return p
 
 
+def zeroOdeState():
+    return np.zeros(16)
+
+
 def zeroShrimpState():
     """ Generates Shrimp state where everything is zero/nominal """
     odeState = np.zeros(16)
     state = ShrimpState.fromOdeState(odeState)
     return state
-
