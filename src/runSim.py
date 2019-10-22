@@ -71,7 +71,7 @@ def runSimulation(tf=0.3, plot=False, viz=False, test=False):
     print('Time elapsed for simulation: %f' % (endTime - startTime))
     if plot:
         plotOdeStates(states, t, test)
-#        plotOdeOutputs(_odeOutputs)
+        plotOdeOutputs(_odeOutputs)
         plotForces(_odeOutputs)
         plotMoments(_odeOutputs)
         plt.show()
@@ -87,5 +87,5 @@ def testRunSim():
 
 if __name__ == "__main__":
     # TODO: add args
-    runSimulation(tf=0.3, plot=True, viz=False)
+    runSimulation(tf=0.8, plot=True, viz=True)
 

@@ -71,11 +71,11 @@ global v_clamp r_b nu_style nu Vcg omg omg_r omg_b angles angle_r angle_s pitch1
         Fg = [-m*g*sin(angles(2)), m*g*cos(angles(2))*sin(angles(1)), m*g*cos(angles(2))*cos(angles(1))];
 
         %% CG acceleration in flyer frame
-        VcgDot = (1/(m))*(F_p+F_d+Fg)'-cross3(omg,Vcg);
+        VcgDot = (1/m)*(F_p+F_d+Fg)'-cross3(omg,Vcg);
 
         %% Rotate Inertias
-        Ib_bF = Rb_f*Is_s*Rb_f'; %calculated in ComputeAero
-        Ir_rF = Rr_f*Ir_r*Rr_f'; %calculated in ComputeAero
+        Ib_bF = Rb_f*Is_s*Rb_f'; %calculated in ComputeAero, Is_s stator inerta at stator cg in flyer frame
+        Ir_rF = Rr_f*Ir_r*Rr_f'; %calculated in ComputeAero, Ir_r Rotor inertia at rotor cg in flyer frame
 
         %% Rotor rotational acceleration in rotor frame
         omg_rDot = Ir_r\((M_p*Rr_f'+M_mR).*[0 0 1])';

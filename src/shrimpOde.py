@@ -14,10 +14,10 @@ from mathUtil import angVel2EulerAngleVel, rotateTensor, rotmFromYaw
 _odeOutputs = {
     "times": [],
     "thrustsProp": [],
-    "forcesAero_w": [],
-    "momentsAero_w": [],
-    "forcesGravity_w": [],
-    "forcesAngVel_w": [],
+    "forceBodyProp_w": [],
+    "forceShaftProp_w": [],
+    "forceGravity_w": [],
+    "forceAngVel_w": [],
     "momentBodyProp_f": [],
     "momentShaftProp_f": [],
     "momentNegMotor_f": [],
@@ -25,7 +25,9 @@ _odeOutputs = {
     "momentGyro2_f": [],
     "momentBodyInertial_f": [],
     "momentPropInertial_f": [],
+    "inflowVelocity": [],
 }
+
 
 def flyerOde(odeState, t, p):
     """ This assembles everything for the ode integration and returns dx/dt in the Flyer Frame
@@ -53,10 +55,10 @@ def flyerOde(odeState, t, p):
         Returns the derivative of the ODE state vector.
         TODO: rename this function
     """
-    _odeOutputs["times"].append(t)
 
     # Set up useful quantities
     s = ShrimpState.fromOdeState(odeState)  # ShrimpState
+
     totalMass = p.bodyMass + p.propMass
     # Rotations
     rot_f2b = s.rot_f2b
@@ -66,6 +68,7 @@ def flyerOde(odeState, t, p):
     rot_b2p = rotmFromYaw(s.yaw_b2p)
     rot_p2b = np.transpose(rot_b2p)
     rot_p2f = rot_p2b.dot(rot_b2f)
+    rot_f2p = np.transpose(rot_p2f)
 
     # Rotate some quantities
     vel_w2b_f = rot_w2f.dot(s.vel_w2b_w)
@@ -80,21 +83,22 @@ def flyerOde(odeState, t, p):
     pwm = shrimpController(p, s)
 
     # Calculate Aerodynamic Forces
+    s.inflowVel = ??? # TODO(Chang): Fill this in with the correct value from the rest of the state
+    # The idea here is using the rest of the state, so using rotations and also the current velocity of the vehicle,
+    # and parameters of the duct in the system, find out what this quantity should be.
+    # If this quantity is dynamic (should be integrated) - find this out from may piccoli's thesis, but
+    # it might also just depend on body velocity and orientation.
     (bodyPropForce_b, bodyPropMoment_b) = getPropForceMoment(p.bodyPropParams, p, s)
     (shaftPropForce_b, shaftPropMoment_b) = getPropForceMoment(p.shaftPropParams, p, s)
     bodyPropMoment_f = rot_b2f.dot(bodyPropMoment_b)
     shaftPropMoment_f = rot_b2f.dot(shaftPropMoment_b)
-    forcesAero_f = rot_b2f.dot(bodyPropForce_b + shaftPropForce_b)
-    momentsAero_f = bodyPropMoment_f + shaftPropMoment_f
-    _odeOutputs["thrustsProp"].append(forcesAero_f[2])
-    _odeOutputs["forcesAero_w"].append(rot_f2w.dot(forcesAero_f))
-    _odeOutputs["momentsAero_w"].append(rot_f2w.dot(momentsAero_f))
-
+    bodyPropForce_f = rot_b2f.dot(bodyPropForce_b)
+    shaftPropForce_f = rot_b2f.dot(shaftPropForce_b)
+    forcesAero_f = bodyPropForce_f + shaftPropForce_f
 
     # Calculate Gravity
-    gravity_w = np.array([0, 0, -9.81])*totalMass
+    gravity_w = np.array([0, 0, -9.81]) * totalMass
     gravity_f = rot_w2f.dot(gravity_w)
-    _odeOutputs["forcesGravity_w"].append(gravity_w)
 
     # Motor equations
     K_t = p.motorParams.K_t
@@ -118,18 +122,11 @@ def flyerOde(odeState, t, p):
     angvel_w2p_f = s.angvel_w2f_f + angvel_f2p_f
     moment_gyro2_f = -np.cross(s.angvel_w2f_f, propInertia_f.dot(angvel_w2p_f))
     bodyInertialMoment_f = - inertia_f.dot(angacc_f2b_f)
-    propInertialMoment_f = - propInertia_f.dot(angacc_b2p_f)
-    _odeOutputs["momentBodyProp_f"].append(bodyPropMoment_f)
-    _odeOutputs["momentShaftProp_f"].append(shaftPropMoment_f)
-    _odeOutputs["momentNegMotor_f"].append(-motorMoment_f)
-    _odeOutputs["momentGyro1_f"].append(moment_gyro1_f)
-    _odeOutputs["momentGyro2_f"].append(moment_gyro2_f)
-    _odeOutputs["momentBodyInertial_f"].append(bodyInertialMoment_f)
-    _odeOutputs["momentPropInertial_f"].append(propInertialMoment_f)
 
+    # Next line is experimental, following piccoli's code closer
+    propInertialMoment_f = - propInertia_f.dot(angacc_b2p_f)
     allMoments_f = (bodyPropMoment_f + shaftPropMoment_f - motorMoment_f +
                     moment_gyro1_f + moment_gyro2_f + bodyInertialMoment_f + propInertialMoment_f)
-
 
     allInertiaInv_f = np.linalg.inv(inertia_f + propInertia_f)
     # Piccoli's Euler equations
@@ -139,7 +136,6 @@ def flyerOde(odeState, t, p):
     # Newton's equations
     forcesAngVel_f = - np.cross(s.angvel_w2f_f, vel_w2f_f)
     acc_w2f_f = (1 / totalMass) * (forcesAero_f + gravity_f) + forcesAngVel_f
-    _odeOutputs["forcesAngVel_w"].append(rot_f2w.dot(forcesAngVel_f))
 
     acc_w2f_w = rot_f2w.dot(acc_w2f_f)
     acc_f2b_w = np.zeros(3)  # flyer and body occupy the same point bruh
@@ -162,6 +158,22 @@ def flyerOde(odeState, t, p):
     dOdeState[13] = angacc_b2p_f[2]  # yawDot_b2p is the prop speed wrt body frame (stator frame)
     dOdeState[14] = s.yawDot_f2b  # yaw_f2b from flyer to stator/body frame
     dOdeState[15] = s.yawDot_b2p  # yaw_b2p from stator/body to rotor/prop frame
+
+    _odeOutputs["times"].append(t)
+
+    _odeOutputs["forceGravity_w"].append(gravity_w)
+    _odeOutputs["thrustsProp"].append(forcesAero_f[2])
+    _odeOutputs["forceBodyProp_w"].append(rot_f2w.dot(bodyPropForce_f))
+    _odeOutputs["forceShaftProp_w"].append(rot_f2w.dot(shaftPropForce_f))
+    _odeOutputs["forceAngVel_w"].append(rot_f2w.dot(forcesAngVel_f))
+
+    _odeOutputs["momentBodyProp_f"].append(bodyPropMoment_f)
+    _odeOutputs["momentShaftProp_f"].append(shaftPropMoment_f)
+    _odeOutputs["momentNegMotor_f"].append(-motorMoment_f)
+    _odeOutputs["momentGyro1_f"].append(moment_gyro1_f)
+    _odeOutputs["momentGyro2_f"].append(moment_gyro2_f)
+    _odeOutputs["momentBodyInertial_f"].append(bodyInertialMoment_f)
+    _odeOutputs["momentPropInertial_f"].append(propInertialMoment_f)
     return dOdeState
 
 

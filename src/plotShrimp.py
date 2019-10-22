@@ -145,23 +145,25 @@ def plotXyzType(outputs, typeName):
     typeKeys = [k for k in keys if typeName in k]
     axesNames = 'xyz'
     fig, axs = plt.subplots(3, 1)
+    fig.subplots_adjust(right=0.8)
     for (i, axisName) in enumerate(axesNames):
         for k in typeKeys:
             print('plotting %s' % k)
-            axs[i].plot(times, np.array(outputs[k])[:, i])
+            axs[i].plot(times, np.array(outputs[k])[:, i], label=k)
         axs[i].set_xlabel('Time [s]')
         axs[i].set_ylabel(axisName)
-        axs[i].legend(typeKeys)
+        axs[i].legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    axs[0].set_title(typeName)
 
 
 def plotForces(outputs):
     """Plot all forces on a single plot"""
-    plotXyzType(outputs, 'forces')
+    plotXyzType(outputs, 'force')
 
 
 def plotMoments(outputs):
     """Plot all moments on a single plot"""
-    plotXyzType(outputs, 'moments')
+    plotXyzType(outputs, 'moment')
 
 
 def plotOdeOutputs(outputs):
